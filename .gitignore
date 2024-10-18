@@ -1,0 +1,36 @@
+# Visual Studio
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.ide
+*.sln.docstates
+
+# Build Folders
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.mdb
+*.appx
+
+# Docker
+docker-compose.yml
+
+# EF Core Migrations
+Migrations/*
+
+# Appsettings Json
+appsettings.json
+appsettings.Development.json
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs
+*.log
+
+# Visual Studio Code files
+.vscode/
