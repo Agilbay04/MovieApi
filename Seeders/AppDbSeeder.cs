@@ -96,7 +96,7 @@ namespace MovieApi.Seeders
                 await context.SaveChangesAsync();
             }
 
-            // Seed users with hashing password
+            // Seed users
             if (!context.Users.Any())
             {
                 var pwdAdmin = PasswordUtil.HashPassword("admin123");
@@ -124,6 +124,38 @@ namespace MovieApi.Seeders
                 };
 
                 await context.Users.AddRangeAsync(users);
+                await context.SaveChangesAsync();
+            }
+
+            // Seed studios
+            if (!context.Studios.Any())
+            {
+                var studios = new List<Studio>()
+                {
+                    new Studio
+                    {
+                        Code = "S01",
+                        Name = "Studio 1",
+                        Facility = "Dolby Atmos",
+                        CreatedBy = "admin"
+                    },
+                    new Studio
+                    {
+                        Code = "S02",
+                        Name = "Studio 2",
+                        Facility = "Dolby Atmos",
+                        CreatedBy = "admin"
+                    },
+                    new Studio
+                    {
+                        Code = "S03",
+                        Name = "Studio 3",
+                        Facility = "Dolby Atmos",
+                        CreatedBy = "admin"
+                    }
+                };
+
+                await context.Studios.AddRangeAsync(studios);
                 await context.SaveChangesAsync();
             }
         }

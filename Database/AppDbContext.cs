@@ -13,12 +13,14 @@ namespace MovieApi.Database
         public DbSet<MovieGenre> MovieGenres { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; } 
+        public DbSet<Studio> Studios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Set unique fields
             modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
             modelBuilder.Entity<Role>().HasIndex(u => u.Code).IsUnique();
+            modelBuilder.Entity<Studio>().HasIndex(u => u.Code).IsUnique();
 
             ToSnakeCase(modelBuilder);
         }
