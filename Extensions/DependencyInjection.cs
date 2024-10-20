@@ -3,6 +3,7 @@ using MovieApi.Services.AuthService;
 using MovieApi.Services.GenreService;
 using MovieApi.Services.MovieService;
 using MovieApi.Services.RoleService;
+using MovieApi.Services.StudioService;
 using MovieApi.Utilities;
 
 namespace MovieApi.Extensions
@@ -21,6 +22,10 @@ namespace MovieApi.Extensions
             services.AddScoped<PasswordUtil>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<AuthMapper>();
+            services.AddScoped<IStudioService, StudioService>();
+            services.AddScoped<StudioMapper>();
+            services.AddScoped<DateUtil>();
+            services.AddScoped<SeatMapper>();
         }
     }
 }
