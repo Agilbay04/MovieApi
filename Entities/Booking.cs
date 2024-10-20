@@ -1,0 +1,62 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MovieApi.Entities
+{
+    public class Booking
+    {
+        [Key]
+        [MaxLength(100)]
+        public string Id { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string BookingCode { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        [ForeignKey("Showtime")]
+        public string ShowtimeId { get; set; }
+
+        public virtual Showtime? Showtime { get; set; }
+
+        [Required]
+        public DateTime BookingDate { get; set; }
+
+        [Required]
+        [MaxLength(10)]
+        public string PaymentType { get; set; }
+        
+        [Required]
+        [MaxLength(1)]
+        public int PaymentStatus { get; set; }
+
+        public string? PaymentProof { get; set; }
+
+        [Required]
+        [MaxLength(4)]
+        public int Quantity { get; set; }
+
+        [Required]
+        public int PriceValue { get; set; }
+
+        [Required]
+        public int TotalPrice { get; set; }
+
+        public string? CancelReason { get; set; }
+
+        [Required]
+        [MaxLength(10)]
+        public string OrderFrom { get; set; }
+
+        public DateTime? CreatedAt { get; set; }
+
+        [MaxLength(100)]
+        public string? CreatedBy { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
+        [MaxLength(100)]
+        public string? UpdatedBy { get; set; }
+    }
+}

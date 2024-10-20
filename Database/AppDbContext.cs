@@ -17,7 +17,8 @@ namespace MovieApi.Database
         public DbSet<Seat> Seats { get; set; }
         public DbSet<Showtime> Showtimes { get; set; }
         public DbSet<Price> Prices { get; set; }
-
+        public DbSet<Booking> Bookings { get; set; }
+        public DbSet<BookingSeat> BookingSeats { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +27,20 @@ namespace MovieApi.Database
             modelBuilder.Entity<Role>().HasIndex(u => u.Code).IsUnique();
             modelBuilder.Entity<Studio>().HasIndex(u => u.Code).IsUnique();
             modelBuilder.Entity<Price>().HasIndex(u => u.Code).IsUnique();
+            modelBuilder.Entity<Booking>().HasIndex(u => u.BookingCode).IsUnique();
+
+            // Set foreign keys
+            modelBuilder.Entity<BookingSeat>()
+                .HasOne(bs => bs.Booking)
+                .WithMany()
+                .HasForeignKey(bs => bs.BookingId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<BookingSeat>()
+                .HasOne(bs => bs.Seat)
+                .WithMany()
+                .HasForeignKey(bs => bs.SeatId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             SetIdValueToUUID(modelBuilder);
             ToSnakeCase(modelBuilder);
