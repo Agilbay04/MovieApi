@@ -215,6 +215,42 @@ namespace MovieApi.Seeders
                 await context.Studios.AddRangeAsync(studios);
                 await context.SaveChangesAsync();
             }
+
+            // Seed prices
+            if (!context.Prices.Any())
+            {
+                var prices = new List<Price>()
+                {
+                    new Price
+                    {
+                        Code = "weekday",
+                        Name = "Weekday",
+                        Description = "Price for weekday",
+                        PriceValue = 30000,
+                        CreatedBy = "admin"
+                    },
+                    new Price
+                    {
+                        Code = "weekend",
+                        Name = "Weekend",
+                        Description = "Price for weekend",
+                        PriceValue = 35000,
+                        CreatedBy = "admin"
+                    },
+                    new Price
+                    {
+                        Code = "primetime",
+                        Name = "Primetime",
+                        Description = "Price for movie release day",
+                        PriceValue = 40000,
+                        CreatedBy = "admin"
+                    }
+                };                
+
+                await context.Prices.AddRangeAsync(prices);
+                await context.SaveChangesAsync();
+            }
+
         }
     }
 }

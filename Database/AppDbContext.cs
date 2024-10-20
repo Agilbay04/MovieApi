@@ -15,6 +15,10 @@ namespace MovieApi.Database
         public DbSet<Role> Roles { get; set; } 
         public DbSet<Studio> Studios { get; set; }
         public DbSet<Seat> Seats { get; set; }
+        public DbSet<Showtime> Showtimes { get; set; }
+        public DbSet<Price> Prices { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,6 +26,7 @@ namespace MovieApi.Database
             modelBuilder.Entity<User>().HasIndex(u => u.Username).IsUnique();
             modelBuilder.Entity<Role>().HasIndex(u => u.Code).IsUnique();
             modelBuilder.Entity<Studio>().HasIndex(u => u.Code).IsUnique();
+            modelBuilder.Entity<Price>().HasIndex(u => u.Code).IsUnique();
 
             SetIdValueToUUID(modelBuilder);
             ToSnakeCase(modelBuilder);
