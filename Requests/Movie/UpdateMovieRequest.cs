@@ -10,7 +10,7 @@ namespace MovieApi.Requests.Movie
         
         public int Duration { get; set; }
         
-        public int IsPublished { get; set; }
+        public bool IsPublished { get; set; }
         
         [JsonIgnore]
         public DateTime? UpdatedAt { get; set; } = DateTime.Now;

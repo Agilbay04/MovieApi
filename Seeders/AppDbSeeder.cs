@@ -1,4 +1,3 @@
-using MovieApi.Constants;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Utilities;
@@ -19,8 +18,6 @@ namespace MovieApi.Seeders
                         Title = "The Godfather",
                         Duration = 175,
                         Description = "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-                        Deleted = 0,
-                        IsPublished = 1,
                         CreatedBy = "admin"
                     },
                     new Movie
@@ -28,8 +25,6 @@ namespace MovieApi.Seeders
                         Title = "The Matrix",
                         Duration = 150,
                         Description = "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.",
-                        Deleted = 0,
-                        IsPublished = 1,
                         CreatedBy = "admin"
                     },
                     new Movie
@@ -37,8 +32,6 @@ namespace MovieApi.Seeders
                         Title = "The Lord of the Rings: The Return of the King",
                         Duration = 200,
                         Description = "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.",
-                        Deleted = 0,
-                        IsPublished = 1,
                         CreatedBy = "admin"
                     }
                 };
@@ -66,10 +59,71 @@ namespace MovieApi.Seeders
                     {
                         Name = "Comedy",
                         CreatedBy = "admin"
-                    }                    
+                    },
+                    new Genre
+                    {
+                        Name = "Horror",
+                        CreatedBy = "admin"
+                    },
+                    new Genre
+                    {
+                        Name = "Thriller",
+                        CreatedBy = "admin"
+                    },
+                    new Genre
+                    {
+                        Name = "Romance",
+                        CreatedBy = "admin"
+                    },
+                    new Genre
+                    {
+                        Name = "Sci-Fi",
+                        CreatedBy = "admin"
+                    }               
                 };
 
                 await context.Genres.AddRangeAsync(genres);
+                await context.SaveChangesAsync();
+            }
+
+            // seed movie genres
+            if (!context.MovieGenres.Any())
+            {
+                var movieGenres = new List<MovieGenre>()
+                {
+                    new MovieGenre
+                    {
+                        MovieId = context.Movies.Where(m => m.Title == "The Godfather").Select(m => m.Id).FirstOrDefault(),
+                        GenreId = context.Genres.Where(g => g.Name == "Drama").Select(g => g.Id).FirstOrDefault(),
+                        CreatedBy = "admin"
+                    },
+                    new MovieGenre
+                    {
+                        MovieId = context.Movies.Where(m => m.Title == "The Godfather").Select(m => m.Id).FirstOrDefault(),
+                        GenreId = context.Genres.Where(g => g.Name == "Action").Select(g => g.Id).FirstOrDefault(),
+                        CreatedBy = "admin"
+                    },
+                    new MovieGenre
+                    {
+                        MovieId = context.Movies.Where(m => m.Title == "The Matrix").Select(m => m.Id).FirstOrDefault(),
+                        GenreId = context.Genres.Where(g => g.Name == "Action").Select(g => g.Id).FirstOrDefault(),
+                        CreatedBy = "admin"
+                    },
+                    new MovieGenre
+                    {
+                        MovieId = context.Movies.Where(m => m.Title == "The Matrix").Select(m => m.Id).FirstOrDefault(),
+                        GenreId = context.Genres.Where(g => g.Name == "Sci-Fi").Select(g => g.Id).FirstOrDefault(),
+                        CreatedBy = "admin"
+                    },
+                    new MovieGenre
+                    {
+                        MovieId = context.Movies.Where(m => m.Title == "The Lord of the Rings: The Return of the King").Select(m => m.Id).FirstOrDefault(),
+                        GenreId = context.Genres.Where(g => g.Name == "Action").Select(g => g.Id).FirstOrDefault(),
+                        CreatedBy = "admin"
+                    }
+                };
+
+                await context.MovieGenres.AddRangeAsync(movieGenres);
                 await context.SaveChangesAsync();
             }
 
@@ -137,6 +191,7 @@ namespace MovieApi.Seeders
                         Code = "S01",
                         Name = "Studio 1",
                         Facility = "Dolby Atmos",
+                        TotalSeats = 50,
                         CreatedBy = "admin"
                     },
                     new Studio
@@ -144,6 +199,7 @@ namespace MovieApi.Seeders
                         Code = "S02",
                         Name = "Studio 2",
                         Facility = "Dolby Atmos",
+                        TotalSeats = 100,
                         CreatedBy = "admin"
                     },
                     new Studio
@@ -151,6 +207,7 @@ namespace MovieApi.Seeders
                         Code = "S03",
                         Name = "Studio 3",
                         Facility = "Dolby Atmos",
+                        TotalSeats = 100,
                         CreatedBy = "admin"
                     }
                 };

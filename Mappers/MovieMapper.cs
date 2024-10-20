@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using MovieApi.Constants;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Responses.Movie;
@@ -23,7 +22,7 @@ namespace MovieApi.Mappers
                 Title = movie.Title,
                 Duration = movie.Duration,
                 Description = movie.Description,
-                IsPublished = movie.IsPublished == (int)AppConstant.StatusPublished.Published ? 
+                IsPublished = movie.IsPublished ? 
                     "Published" : "Unpublished",
                 CreatedAt = movie.CreatedAt?.ToString("dd MMM yyyy HH:mm:ss"),
                 UpdatedAt = movie.UpdatedAt?.ToString("dd MMM yyyy HH:mm:ss"),
@@ -32,7 +31,7 @@ namespace MovieApi.Mappers
 
             var listGenres = await _context.MovieGenres
                 .Where(mg => mg.MovieId == movie.Id && 
-                    mg.Deleted == (int)AppConstant.StatusDelete.NotDeleted)
+                    mg.Deleted == false)
                 .Join(_context.Genres, 
                         mg => mg.GenreId, 
                         g => g.Id, 

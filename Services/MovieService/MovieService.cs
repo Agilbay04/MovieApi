@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using MovieApi.Constants;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests;
@@ -19,7 +18,7 @@ namespace MovieApi.Services.MovieService
         public async Task<Movie> FindByIdAsync(string id)
         {
             var movie = await _context.Movies.FirstOrDefaultAsync(m => m.Id == id && 
-                m.Deleted == (int)AppConstant.StatusDelete.NotDeleted) ?? 
+                m.Deleted == false) ?? 
                 throw new Exception("Movie not found");
             return movie;
         }
@@ -27,7 +26,7 @@ namespace MovieApi.Services.MovieService
         public async Task<IEnumerable<Movie>> FindAllAsync()
         {
             return await _context.Movies
-                .Where(m => m.Deleted == (int)AppConstant.StatusDelete.NotDeleted)
+                .Where(m => m.Deleted == false)
                 .ToListAsync();
         }
 
@@ -37,8 +36,7 @@ namespace MovieApi.Services.MovieService
             {
                 Title = req.Title,
                 Duration = req.Duration,
-                Description = req.Description,
-                IsPublished = req.IsPublished
+                Description = req.Description
             };
             await _context.Movies.AddAsync(movie);
 
@@ -77,7 +75,7 @@ namespace MovieApi.Services.MovieService
             {
                 var movieOldGenres = await _context.MovieGenres
                     .Where(mg => mg.MovieId == id && 
-                        mg.Deleted == (int)AppConstant.StatusDelete.NotDeleted)
+                        mg.Deleted == false)
                     .ToListAsync();
                 
                 if (movieOldGenres != null)
@@ -90,7 +88,7 @@ namespace MovieApi.Services.MovieService
                             continue;
                         }
 
-                        movieOldGenre.Deleted = (int)AppConstant.StatusDelete.Deleted;
+                        movieOldGenre.Deleted = true;
                         movieOldGenre.UpdatedAt = DateTime.Now;
                         _context.MovieGenres.Update(movieOldGenre);
                     }
@@ -119,19 +117,19 @@ namespace MovieApi.Services.MovieService
 
             var movie = await FindByIdAsync(id);
             
-            movie.Deleted = (int)AppConstant.StatusDelete.Deleted;
+            movie.Deleted = true;
             movie.UpdatedAt = DateTime.Now;
             
             var movieGenres = await _context.MovieGenres
                 .Where(mg => mg.MovieId == id && 
-                    mg.Deleted == (int)AppConstant.StatusDelete.NotDeleted)
+                    mg.Deleted == false)
                 .ToListAsync();
             
             if (movieGenres != null)
             {
                 foreach (var movieGenre in movieGenres)
                 {
-                    movieGenre.Deleted = (int)AppConstant.StatusDelete.Deleted;
+                    movieGenre.Deleted = true;
                     movieGenre.UpdatedAt = DateTime.Now;
                     _context.MovieGenres.Update(movieGenre);
                 }

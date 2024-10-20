@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using MovieApi.Constants;
 
 namespace MovieApi.Entities
 {
@@ -8,7 +7,7 @@ namespace MovieApi.Entities
     {
         [Key]
         [MaxLength(100)]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string Id { get; set; }
         
         [Required]
         [MaxLength(100)]
@@ -32,10 +31,9 @@ namespace MovieApi.Entities
 
         public virtual Role? Role { get; set; }
 
-        [MaxLength(1)]
-        public int Deleted { get; set; } = (int)AppConstant.StatusDelete.NotDeleted;
+        public bool Deleted { get; set; }
 
-        public DateTime? CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? CreatedAt { get; set; }
 
         [MaxLength(100)]
         public string? CreatedBy { get; set; }

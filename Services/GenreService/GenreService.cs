@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using MovieApi.Constants;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests.Genre;
@@ -19,7 +17,7 @@ namespace MovieApi.Services.GenreService
         public async Task<Genre> FindByIdAsync(string id)
         {
             var genre = await _context.Genres.FirstOrDefaultAsync(g => g.Id == id && 
-                g.Deleted == (int)AppConstant.StatusDelete.NotDeleted) ?? 
+                g.Deleted == false) ?? 
                 throw new Exception("Genre not found");
             
             return genre;
@@ -28,7 +26,7 @@ namespace MovieApi.Services.GenreService
         public async Task<IEnumerable<Genre>> FindAllAsync()
         {
             return await _context.Genres
-                .Where(g => g.Deleted == (int)AppConstant.StatusDelete.NotDeleted)
+                .Where(g => g.Deleted == false)
                 .ToListAsync();
         }
 
@@ -36,7 +34,7 @@ namespace MovieApi.Services.GenreService
         {
             var isNameExists = await _context.Genres
                 .FirstOrDefaultAsync(g => g.Name.ToLower() == req.Name.ToLower() && 
-                g.Deleted == (int)AppConstant.StatusDelete.NotDeleted);
+                g.Deleted == false);
 
             if (isNameExists != null)
                 throw new BadHttpRequestException("Genre name already exists");
@@ -67,7 +65,7 @@ namespace MovieApi.Services.GenreService
         public async Task<Genre> DeleteAsync(string id)
         {
             var genreInUsed = await _context.MovieGenres
-                .Where(mg => mg.GenreId == id && mg.Deleted == (int)AppConstant.StatusDelete.NotDeleted)
+                .Where(mg => mg.GenreId == id && mg.Deleted == false)
                 .FirstOrDefaultAsync();
             
             if (genreInUsed != null)
@@ -75,7 +73,7 @@ namespace MovieApi.Services.GenreService
 
             var genre = await FindByIdAsync(id);
 
-            genre.Deleted = (int)AppConstant.StatusDelete.Deleted;
+            genre.Deleted = true;
             genre.UpdatedAt = DateTime.Now;;
 
             _context.Genres.Update(genre);

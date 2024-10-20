@@ -1,4 +1,5 @@
 using MovieApi.Mappers;
+using MovieApi.Services.AuthService;
 using MovieApi.Services.GenreService;
 using MovieApi.Services.MovieService;
 using MovieApi.Services.RoleService;
@@ -18,6 +19,8 @@ namespace MovieApi.Extensions
             services.AddScoped<RoleMapper>();
             services.AddScoped<JwtUtil>();
             services.AddScoped<PasswordUtil>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<AuthMapper>();
         }
     }
 }

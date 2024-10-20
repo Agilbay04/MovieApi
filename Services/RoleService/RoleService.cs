@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using MovieApi.Constants;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests.Role;
@@ -18,7 +17,7 @@ namespace MovieApi.Services.RoleService
         public async Task<Role> FindByIdAsync(string id)
         {
             var role = await _context.Roles
-                .Where(r => r.Id == id && r.Deleted == (int)AppConstant.StatusDelete.NotDeleted)
+                .Where(r => r.Id == id && r.Deleted == false)
                 .FirstOrDefaultAsync() ?? throw new Exception("Role not found");
             return role;
         }
@@ -26,7 +25,7 @@ namespace MovieApi.Services.RoleService
         public async Task<Role> FindByCodeAsync(string code)
         {
             var role = await _context.Roles
-                .Where(r => r.Code == code && r.Deleted == (int)AppConstant.StatusDelete.NotDeleted)
+                .Where(r => r.Code == code && r.Deleted == false)
                 .FirstOrDefaultAsync() ?? throw new Exception("Role not found");
             return role;
         }
@@ -34,7 +33,7 @@ namespace MovieApi.Services.RoleService
         public async Task<IEnumerable<Role>> FindAllAsync()
         {
             return await _context.Roles
-                .Where(r => r.Deleted == (int)AppConstant.StatusDelete.NotDeleted)
+                .Where(r => r.Deleted == false)
                 .ToListAsync();
         }
 
@@ -90,14 +89,14 @@ namespace MovieApi.Services.RoleService
         public async Task<Role> DeleteAsync(string id)
         {
             var roleInUsed = await _context.Users
-                .Where(u => u.RoleId == id && u.Deleted == (int)AppConstant.StatusDelete.NotDeleted)
+                .Where(u => u.RoleId == id && u.Deleted == false)
                 .FirstOrDefaultAsync();
             
             if (roleInUsed != null)
                 throw new Exception("Role in used");
 
             var role = await FindByIdAsync(id);
-            role.Deleted = (int)AppConstant.StatusDelete.Deleted;
+            role.Deleted = true;
             _context.Roles.Update(role);
             await _context.SaveChangesAsync();
             return role;

@@ -1,11 +1,8 @@
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MovieApi.Constants;
-using MovieApi.Database;
-using MovieApi.Entities;
+using MovieApi.Mappers;
 using MovieApi.Requests.Auth;
-using MovieApi.Utilities;
+using MovieApi.Responses.Auth;
+using MovieApi.Services.AuthService;
 
 namespace MovieApi.Controllers.v1
 {
@@ -13,76 +10,69 @@ namespace MovieApi.Controllers.v1
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly JwtUtil _jwtUtil;
+        private readonly IAuthService _authService;
 
-        private readonly AppDbContext _context;
+        private readonly AuthMapper _authMapper;
 
-        public AuthController(JwtUtil jwtUtil, AppDbContext context)
+        public AuthController(IAuthService authService, AuthMapper authMapper)
         {
-            _jwtUtil = jwtUtil;
-            _context = context;
+            _authService = authService;
+            _authMapper = authMapper;
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserLoginRequest req)
+        [ProducesResponseType(type: typeof(LoginResponse), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<LoginResponse>> Login(UserLoginRequest req)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(x => x.Username == req.Username && 
-                    x.Deleted == (int)AppConstant.StatusDelete.NotDeleted);
-                    
-
-            if (user == null)
+            try
             {
-                return NotFound("User not registered");
+                var (user, token) = await _authService.Login(req);
+                var loginDto = await _authMapper.ToDtoLogin(user, token);
+                return Ok(loginDto);
+
+            }
+            catch(UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
 
-            if (PasswordUtil.VerifyPassword(req.Password, user.Password, user.Salt))
+        }
+
+        [HttpPost("customer/register")]
+        [ProducesResponseType(type: typeof(RegisterResponse), statusCode: StatusCodes.Status201Created)]
+        public async Task<ActionResult<RegisterResponse>> Register(UserRegisterRequest req)
+        {
+            try
             {
-                var token = _jwtUtil.GenerateJwtToken(user);
-                return Ok(new { token });
+                var user = await _authService.Register(req);
+                var registerDto = await _authMapper.ToDtoRegister(user);
+                return Ok(registerDto);
             }
-            else
+            catch(Exception ex)
             {
-                return BadRequest("Invalid username or password");
+                throw new Exception(ex.Message);
             }
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register(UserRegisterRequest req)
+        [HttpPost("admin/register")]
+        [ProducesResponseType(type: typeof(RegisterResponse), statusCode: StatusCodes.Status201Created)]
+        public async Task<ActionResult<RegisterResponse>> RegisterAdmin(UserRegisterRequest req)
         {
-            var roleId = "";
-            var user = await _context.Users
-                .FirstOrDefaultAsync(x => x.Username == req.Username && 
-                    x.Deleted == (int)AppConstant.StatusDelete.NotDeleted);
-
-            if (user != null)
+            try
             {
-                return BadRequest("Username already exists");
+                var user = await _authService.RegisterAdmin(req);
+                var registerDto = await _authMapper.ToDtoRegister(user);
+                return Ok(registerDto);
             }
-
-            var hashedPassword = PasswordUtil.HashPassword(req.Password);
-
-            var roleCustomer = await _context.Roles
-                .FirstOrDefaultAsync(x => x.Code == AppConstant.ROLE_CUSTOMER && 
-                    x.Deleted == (int)AppConstant.StatusDelete.NotDeleted);
-
-            if (roleCustomer != null)
+            catch(Exception ex)
             {
-                roleId = roleCustomer.Id;
+                throw new Exception(ex.Message);
             }
-
-            var newUser = new User
-            {
-                Name = req.Name,
-                Username = req.Username,
-                Salt = hashedPassword.salt,
-                Password = hashedPassword.hashedPassword,
-                RoleId = roleId,
-            };
-
-            await _context.Users.AddAsync(newUser);
-            await _context.SaveChangesAsync();
-            return Ok();
         }
+
     }
 }

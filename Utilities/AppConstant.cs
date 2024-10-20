@@ -1,7 +1,19 @@
-namespace MovieApi.Constants
+namespace MovieApi.Utilities
 {
     public class AppConstant
     {
+        public enum StatusActive
+        {
+            Active = 1,
+            NotActive = 0
+        }
+
+        public enum StatusDeleted
+        {
+            Deleted = 1,
+            NotDeleted = 0
+        }
+
         public enum StatusDelete
         {
             Deleted = 1,
