@@ -3,6 +3,7 @@ using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests;
 using MovieApi.Requests.Movie;
+using MovieApi.Utilities;
 
 namespace MovieApi.Services.MovieService
 {
@@ -10,9 +11,12 @@ namespace MovieApi.Services.MovieService
     {
         private readonly AppDbContext _context;
 
-        public MovieService(AppDbContext context)
+        private readonly DateUtil _dateUtil;
+
+        public MovieService(AppDbContext context, DateUtil dateUtil)
         {
             _context = context;
+            _dateUtil = dateUtil;
         }
 
         public async Task<Movie> FindByIdAsync(string id)
@@ -27,18 +31,24 @@ namespace MovieApi.Services.MovieService
         {
             return await _context.Movies
                 .Where(m => m.Deleted == false)
+                .OrderByDescending(m => m.CreatedAt)
                 .ToListAsync();
         }
 
         public async Task<Movie> CreateAsync(CreateMovieRequest req)
         {
+            var releaseDate = _dateUtil.GetStringToDate(req.ReleaseDate);
+
             var movie = new Movie
             {
                 Title = req.Title,
                 Duration = req.Duration,
+                ReleaseDate = releaseDate,
+                IsPublished = _dateUtil.IsDateInRangeOneWeek(releaseDate),
                 Description = req.Description
             };
             await _context.Movies.AddAsync(movie);
+            await _context.SaveChangesAsync();
 
             if (req.ListOfGenres != null)
             {
@@ -62,13 +72,16 @@ namespace MovieApi.Services.MovieService
         {
             if (id == null)
                 throw new Exception("Id is required");
+
+            var releaseDate = _dateUtil.GetStringToDate(req.ReleaseDate);
             
             var isMovieExists = await FindByIdAsync(id);
 
             isMovieExists.Title = req.Title;
             isMovieExists.Duration = req.Duration;
             isMovieExists.Description = req.Description;
-            isMovieExists.IsPublished = req.IsPublished;
+            isMovieExists.ReleaseDate = releaseDate;
+            isMovieExists.IsPublished = _dateUtil.IsDateInRangeOneWeek(releaseDate);
             isMovieExists.UpdatedAt = DateTime.Now;
 
             if (req.ListOfGenres != null)

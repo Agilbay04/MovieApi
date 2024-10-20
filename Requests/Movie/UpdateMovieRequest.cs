@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace MovieApi.Requests.Movie
 {
     public class UpdateMovieRequest
@@ -9,14 +7,10 @@ namespace MovieApi.Requests.Movie
         public string Description { get; set; }
         
         public int Duration { get; set; }
+
+        public string ReleaseDate { get; set; }
         
         public bool IsPublished { get; set; }
-        
-        [JsonIgnore]
-        public DateTime? UpdatedAt { get; set; } = DateTime.Now;
-        
-        [JsonIgnore]
-        public string? UpdatedBy { get; set; } = "admin";
         
         public List<string>? ListOfGenres { get; set; }
     }

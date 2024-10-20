@@ -18,6 +18,7 @@ namespace MovieApi.Services.StudioService
         {
             var studio = await _context
                 .Studios
+                .OrderBy(s => s.Code)
                 .FirstOrDefaultAsync(x => x.Id == id && x.Deleted == false) ?? 
                 throw new Exception("Studio not found");
             

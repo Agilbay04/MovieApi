@@ -15,23 +15,26 @@ namespace MovieApi.Seeders
                 {
                     new Movie
                     {
-                        Title = "The Godfather",
-                        Duration = 175,
-                        Description = "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                        Title = "The Wild Robot",
+                        Duration = 102,
+                        Description = "The Wild Robot is an upcoming American science fiction action-adventure film.",
+                        ReleaseDate = new DateTime(2024, 10, 9),
                         CreatedBy = "admin"
                     },
                     new Movie
                     {
-                        Title = "The Matrix",
-                        Duration = 150,
-                        Description = "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.",
+                        Title = "Venom Let There Be Carnage",
+                        Duration = 109,
+                        Description = "After finding an old friend, the lifeblood of the symbiote, Venom, sets out to take him to the surface.",
+                        ReleaseDate = new DateTime(2024, 10, 23),
                         CreatedBy = "admin"
                     },
                     new Movie
                     {
-                        Title = "The Lord of the Rings: The Return of the King",
-                        Duration = 200,
-                        Description = "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.",
+                        Title = "Red One",
+                        Duration = 123,
+                        Description = "Red one spy and action hero, who have to defeat the evil forces of the enemy.",
+                        ReleaseDate = new DateTime(2024, 11, 4),
                         CreatedBy = "admin"
                     }
                 };
@@ -93,31 +96,31 @@ namespace MovieApi.Seeders
                 {
                     new MovieGenre
                     {
-                        MovieId = context.Movies.Where(m => m.Title == "The Godfather").Select(m => m.Id).FirstOrDefault(),
-                        GenreId = context.Genres.Where(g => g.Name == "Drama").Select(g => g.Id).FirstOrDefault(),
-                        CreatedBy = "admin"
-                    },
-                    new MovieGenre
-                    {
-                        MovieId = context.Movies.Where(m => m.Title == "The Godfather").Select(m => m.Id).FirstOrDefault(),
-                        GenreId = context.Genres.Where(g => g.Name == "Action").Select(g => g.Id).FirstOrDefault(),
-                        CreatedBy = "admin"
-                    },
-                    new MovieGenre
-                    {
-                        MovieId = context.Movies.Where(m => m.Title == "The Matrix").Select(m => m.Id).FirstOrDefault(),
-                        GenreId = context.Genres.Where(g => g.Name == "Action").Select(g => g.Id).FirstOrDefault(),
-                        CreatedBy = "admin"
-                    },
-                    new MovieGenre
-                    {
-                        MovieId = context.Movies.Where(m => m.Title == "The Matrix").Select(m => m.Id).FirstOrDefault(),
+                        MovieId = context.Movies.Where(m => m.Title == "The Wild Robot").Select(m => m.Id).FirstOrDefault(),
                         GenreId = context.Genres.Where(g => g.Name == "Sci-Fi").Select(g => g.Id).FirstOrDefault(),
                         CreatedBy = "admin"
                     },
                     new MovieGenre
                     {
-                        MovieId = context.Movies.Where(m => m.Title == "The Lord of the Rings: The Return of the King").Select(m => m.Id).FirstOrDefault(),
+                        MovieId = context.Movies.Where(m => m.Title == "The Wild Robot").Select(m => m.Id).FirstOrDefault(),
+                        GenreId = context.Genres.Where(g => g.Name == "Action").Select(g => g.Id).FirstOrDefault(),
+                        CreatedBy = "admin"
+                    },
+                    new MovieGenre
+                    {
+                        MovieId = context.Movies.Where(m => m.Title == "Venom Let There Be Carnage").Select(m => m.Id).FirstOrDefault(),
+                        GenreId = context.Genres.Where(g => g.Name == "Action").Select(g => g.Id).FirstOrDefault(),
+                        CreatedBy = "admin"
+                    },
+                    new MovieGenre
+                    {
+                        MovieId = context.Movies.Where(m => m.Title == "Venom Let There Be Carnage").Select(m => m.Id).FirstOrDefault(),
+                        GenreId = context.Genres.Where(g => g.Name == "Comedy").Select(g => g.Id).FirstOrDefault(),
+                        CreatedBy = "admin"
+                    },
+                    new MovieGenre
+                    {
+                        MovieId = context.Movies.Where(m => m.Title == "Red One").Select(m => m.Id).FirstOrDefault(),
                         GenreId = context.Genres.Where(g => g.Name == "Action").Select(g => g.Id).FirstOrDefault(),
                         CreatedBy = "admin"
                     }

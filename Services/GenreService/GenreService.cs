@@ -27,6 +27,7 @@ namespace MovieApi.Services.GenreService
         {
             return await _context.Genres
                 .Where(g => g.Deleted == false)
+                .OrderByDescending(g => g.CreatedAt)
                 .ToListAsync();
         }
 

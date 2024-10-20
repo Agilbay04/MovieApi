@@ -26,8 +26,8 @@ namespace MovieApi.Mappers
                     Name = price.Name,
                     Description = price.Description,
                     PriceValue = _priceUtil.GetIDRCurrency(price.PriceValue),
-                    UpdatedAt = _dateUtil.GetDateToString(price.UpdatedAt),
-                    CreatedAt = _dateUtil.GetDateToString(price.CreatedAt)
+                    UpdatedAt = _dateUtil.GetDateTimeToString(price.UpdatedAt),
+                    CreatedAt = _dateUtil.GetDateTimeToString(price.CreatedAt)
                 };
             });
         }
@@ -35,16 +35,12 @@ namespace MovieApi.Mappers
         public async Task<List<PriceResponse>> ToDtos(List<Price> prices)
         {
             return await Task.Run(() => { 
-                return prices.Select(price => new PriceResponse
+                var listPriceResponse = new List<PriceResponse>();
+                foreach (var price in prices)
                 {
-                    Id = price.Id,
-                    Code = price.Code,
-                    Name = price.Name,
-                    Description = price.Description,
-                    PriceValue = _priceUtil.GetIDRCurrency(price.PriceValue),
-                    UpdatedAt = _dateUtil.GetDateToString(price.UpdatedAt),
-                    CreatedAt = _dateUtil.GetDateToString(price.CreatedAt)
-                }).ToList();
+                    listPriceResponse.Add(ToDto(price).Result);
+                }
+                return listPriceResponse;
             });
         }        
     }

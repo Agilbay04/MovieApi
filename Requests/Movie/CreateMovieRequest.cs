@@ -9,11 +9,10 @@ namespace MovieApi.Requests
         public string Description { get; set; }
         
         public int Duration { get; set; } = 0;
+
+        public string ReleaseDate { get; set; }
         
-        public int IsPublished { get; set; } = 1;
-        
-        [JsonIgnore]
-        public string? CreatedBy { get; set; } = "admin";
+        public bool IsPublished { get; set; }
         
         public List<string>? ListOfGenres { get; set; }
     }

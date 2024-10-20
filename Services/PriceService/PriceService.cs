@@ -31,6 +31,7 @@ namespace MovieApi.Services.PriceService
             var prices = await _context
                 .Prices
                 .Where(p => p.Deleted == false)
+                .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
             return prices;
         }

@@ -26,8 +26,8 @@ namespace MovieApi.Mappers
                     Code = studio.Code,
                     Name = studio.Name,
                     TotalSeats = studio.TotalSeats,
-                    CreatedAt = _dateUtil.GetDateToString(studio.CreatedAt),
-                    UpdatedAt = _dateUtil.GetDateToString(studio.UpdatedAt),
+                    CreatedAt = _dateUtil.GetDateTimeToString(studio.CreatedAt),
+                    UpdatedAt = _dateUtil.GetDateTimeToString(studio.UpdatedAt),
                 };
             });
         }
@@ -42,8 +42,8 @@ namespace MovieApi.Mappers
                     Code = studio.Code,
                     Name = studio.Name,
                     TotalSeats = studio.TotalSeats,
-                    CreatedAt = _dateUtil.GetDateToString(studio.CreatedAt),
-                    UpdatedAt = _dateUtil.GetDateToString(studio.UpdatedAt),
+                    CreatedAt = _dateUtil.GetDateTimeToString(studio.CreatedAt),
+                    UpdatedAt = _dateUtil.GetDateTimeToString(studio.UpdatedAt),
                     AvailableSeats = seats.Where(x => x.IsAvailable == true).Count(),
                     ReservedSeats = seats.Where(x => x.IsAvailable == false).Count(),
                     Seats = await _seatMapper.ToDtos(seats)

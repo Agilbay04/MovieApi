@@ -26,6 +26,7 @@ namespace MovieApi.Services.RoleService
         {
             var role = await _context.Roles
                 .Where(r => r.Code == code && r.Deleted == false)
+                .OrderByDescending(r => r.CreatedAt)
                 .FirstOrDefaultAsync() ?? throw new Exception("Role not found");
             return role;
         }

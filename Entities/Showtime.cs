@@ -20,6 +20,11 @@ namespace MovieApi.Entities
         public string StudioId { get; set; }
 
         [Required]
+        [MaxLength(100)]
+        [ForeignKey("Price")]
+        public string PriceId { get; set; }
+
+        [Required]
         public TimeSpan StartTime { get; set; }
 
         [Required]
@@ -28,6 +33,8 @@ namespace MovieApi.Entities
         public virtual Movie? Movie { get; set; }
 
         public virtual Studio? Studio { get; set; }
+
+        public virtual Price? Price { get; set; }
 
         public bool Deleted { get; set; }
 
