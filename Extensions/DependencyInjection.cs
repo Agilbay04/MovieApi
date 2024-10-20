@@ -2,6 +2,7 @@ using MovieApi.Mappers;
 using MovieApi.Services.AuthService;
 using MovieApi.Services.GenreService;
 using MovieApi.Services.MovieService;
+using MovieApi.Services.PriceService;
 using MovieApi.Services.RoleService;
 using MovieApi.Services.StudioService;
 using MovieApi.Utilities;
@@ -26,6 +27,9 @@ namespace MovieApi.Extensions
             services.AddScoped<StudioMapper>();
             services.AddScoped<DateUtil>();
             services.AddScoped<SeatMapper>();
+            services.AddScoped<IPriceService, PriceService>();
+            services.AddScoped<PriceMapper>();
+            services.AddScoped<PriceUtil>();
         }
     }
 }
