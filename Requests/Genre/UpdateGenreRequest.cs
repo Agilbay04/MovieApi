@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace MovieApi.Requests.Genre
 {
-    public class UpdateGenreRequest : BaseRequest
+    public class UpdateGenreRequest
     {
         [Required]
         public string Name { get; set; }

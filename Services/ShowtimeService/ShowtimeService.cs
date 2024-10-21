@@ -1,8 +1,8 @@
-using System.Drawing;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests.Showtime;
+using MovieApi.Responses.Seat;
 using MovieApi.Services.UserService;
 using MovieApi.Utilities;
 
@@ -23,7 +23,7 @@ namespace MovieApi.Services.ShowtimeService
             _userService = userService;
         }
 
-        public async Task<Showtime> FindByIdAsync(string id)
+        public async Task<(Showtime, List<SeatResponse>)> FindByIdAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
                 throw new Exception("Id is required");
@@ -32,8 +32,43 @@ namespace MovieApi.Services.ShowtimeService
                 .Showtimes
                 .FirstOrDefaultAsync(x => x.Id == id && x.Deleted == false) ?? 
                 throw new Exception("Showtime not found");
+
+            var listSeatUnavailable = await _context
+                .Bookings
+                .Join(_context.BookingSeats, b => b.Id, bs => bs.BookingId, (b, bs) => new { b, bs })
+                .Where(x => x.b.ShowtimeId == showtime.Id && x.bs.Deleted == false)
+                .Select(x => new SeatResponse 
+                {
+                    Id = x.bs.SeatId,
+                    SeatNumber = x.bs.Seat.SeatNumber,
+                    Row = x.bs.Seat.Row,
+                    Column = x.bs.Seat.Column,
+                    IsAvailable = false
+                })
+                .ToListAsync();
             
-            return showtime;
+            var listSeatAvailable = await _context
+                .Seats
+                .Where(x => x.StudioId == showtime.StudioId && 
+                    !listSeatUnavailable.Select(x => x.Id).Contains(x.Id) && 
+                    x.Deleted == false)
+                .Select(x => new SeatResponse
+                {
+                    Id = x.Id,
+                    SeatNumber = x.SeatNumber,
+                    Row = x.Row,
+                    Column = x.Column,
+                    IsAvailable = true
+                })
+                .ToListAsync();
+            
+            var listSeat = listSeatAvailable
+                .Concat(listSeatUnavailable)
+                .OrderBy(x => x.Row)
+                .ThenBy(x => x.Column)
+                .ToList();
+                        
+            return (showtime, listSeat);
         }
 
         public async Task<IEnumerable<Showtime>> FindAllAsync()
@@ -105,7 +140,7 @@ namespace MovieApi.Services.ShowtimeService
             
             var priceId = await SetPriceId(playDate, req.MovieId);
 
-            var showtime = await FindByIdAsync(id);
+            var (showtime, _) = await FindByIdAsync(id);
             showtime.MovieId = req.MovieId;
             showtime.StudioId = req.StudioId;
             showtime.PriceId = priceId;
@@ -122,7 +157,7 @@ namespace MovieApi.Services.ShowtimeService
             if (string.IsNullOrEmpty(id))
                 throw new Exception("Id is required");
 
-            var showtime = await FindByIdAsync(id);
+            var (showtime, _) = await FindByIdAsync(id);
             showtime.Deleted = true;
             showtime.UpdatedBy = _userService.GetUserId();
             _context.Showtimes.Update(showtime);

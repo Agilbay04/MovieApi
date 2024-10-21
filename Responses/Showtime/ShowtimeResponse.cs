@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using MovieApi.Responses.Seat;
 
 namespace MovieApi.Responses.Showtime
 {
@@ -39,5 +40,8 @@ namespace MovieApi.Responses.Showtime
         
         [JsonPropertyName("updated_at")]
         public string? UpdatedAt { get; set; }
+        
+        [JsonPropertyName("list_seats")]
+        public List<SeatResponse>? ListSeats { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using MovieApi.Entities;
+using MovieApi.Responses.Seat;
 using MovieApi.Responses.Showtime;
 using MovieApi.Utilities;
 
@@ -34,6 +35,29 @@ namespace MovieApi.Mappers
                     PlayDate = _dateUtil.GetDateToString(showtime.PlayDate),
                     CreatedAt = _dateUtil.GetDateTimeToString(showtime.CreatedAt),
                     UpdatedAt = _dateUtil.GetDateTimeToString(showtime.UpdatedAt)
+                };
+            });
+        }
+
+        public async Task<ShowtimeResponse> ToDtoDetail(Showtime showtime, List<SeatResponse>? listSeat)
+        {
+            return await Task.Run(() =>
+            {
+                return new ShowtimeResponse
+                {
+                    Id = showtime.Id,
+                    MovieId = showtime.MovieId,
+                    MovieTitle = showtime.Movie?.Title,
+                    StudioId = showtime.StudioId,
+                    StudioCode = showtime.Studio?.Code,
+                    StudioName = showtime.Studio?.Name,
+                    PriceCode = showtime.Price?.Code,
+                    Price = _priceUtil.GetIDRCurrency(showtime.Price?.PriceValue ?? 0),
+                    StartTime = _dateUtil.GetTimeToString(showtime.StartTime),
+                    PlayDate = _dateUtil.GetDateToString(showtime.PlayDate),
+                    CreatedAt = _dateUtil.GetDateTimeToString(showtime.CreatedAt),
+                    UpdatedAt = _dateUtil.GetDateTimeToString(showtime.UpdatedAt),
+                    ListSeats = listSeat
                 };
             });
         }

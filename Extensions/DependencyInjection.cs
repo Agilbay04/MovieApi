@@ -1,3 +1,6 @@
+using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
+using MovieApi.Database;
 using MovieApi.Jobs;
 using MovieApi.Mappers;
 using MovieApi.Services.AuthService;
@@ -20,6 +23,7 @@ namespace MovieApi.Extensions
     {
         public static void AddApplicationServices(this IServiceCollection services)
         {
+            // Add Services
             services.AddScoped<IMovieService, MovieService>();
             services.AddScoped<MovieMapper>();
             services.AddScoped<IGenreService, GenreService>();
@@ -53,6 +57,7 @@ namespace MovieApi.Extensions
                 options.UseMicrosoftDependencyInjectionJobFactory();
             });
             services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+
         }
     }
 }

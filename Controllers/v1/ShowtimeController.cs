@@ -28,8 +28,8 @@ namespace MovieApi.Controllers.v1
         {
             try
             {
-                var showtime = await _showtimeService.FindByIdAsync(id);
-                var showtimeDto = await _showtimeMapper.ToDto(showtime);
+                var (showtime, seats) = await _showtimeService.FindByIdAsync(id);
+                var showtimeDto = await _showtimeMapper.ToDtoDetail(showtime, seats);
                 return Ok(showtimeDto);
             }
             catch (Exception ex)
