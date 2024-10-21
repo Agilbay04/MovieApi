@@ -16,7 +16,7 @@ namespace MovieApi.Mappers
             _priceUtil = priceUtil;
         }
 
-        public async Task<BookingResponse> ToDto(Booking booking, List<string>? seats)
+        public async Task<BookingResponse> ToDto(Booking booking, List<string>? seats, User? user)
         {
             return await Task.Run(() =>
             {
@@ -36,7 +36,9 @@ namespace MovieApi.Mappers
                     BookingDate = _dateUtil.GetDateToString(booking.BookingDate),
                     Seats = seats,
                     CreatedAt = _dateUtil.GetDateToString(booking.CreatedAt),
-                    UpdatedAt = _dateUtil.GetDateToString(booking.UpdatedAt)
+                    CreatedBy = user?.Username,
+                    UpdatedAt = _dateUtil.GetDateToString(booking.UpdatedAt),
+                    UpdatedBy = user?.Username
                 };
             });
         }
@@ -45,7 +47,7 @@ namespace MovieApi.Mappers
         {
             return await Task.Run(() =>
             {
-                return bookings.Select(booking => ToDto(booking, null).Result).ToList();
+                return bookings.Select(booking => ToDto(booking, null, null).Result).ToList();
             });
         }
 

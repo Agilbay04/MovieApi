@@ -58,7 +58,7 @@ namespace MovieApi.Entities
         public string? CancelReason { get; set; }
 
         [Required]
-        [MaxLength(10)]
+        [MaxLength(20)]
         public string OrderFrom { get; set; }
 
         public DateTime? CreatedAt { get; set; }

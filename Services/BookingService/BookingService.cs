@@ -3,6 +3,7 @@ using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests.Booking;
 using MovieApi.Services.UploadService;
+using MovieApi.Services.UserService;
 using MovieApi.Utilities;
 
 namespace MovieApi.Services.BookingService
@@ -15,14 +16,21 @@ namespace MovieApi.Services.BookingService
 
         private readonly IUploadService _uploadService;
 
-        public BookingService(AppDbContext context, CodeUtil codeUtil, IUploadService uploadService)
+        private readonly IUserService _userService;
+
+        public BookingService(
+            AppDbContext context, 
+            CodeUtil codeUtil, 
+            IUploadService uploadService,
+            IUserService userService)
         {
             _context = context;
             _codeUtil = codeUtil;
             _uploadService = uploadService;
+            _userService = userService;
         }
 
-        public async Task<(Booking, List<string>)> BookingFromAdminAsync(CreateBookingRequest req)
+        public async Task<(Booking, List<string>, User)> BookingFromAdminAsync(CreateBookingRequest req)
         {
             var orderFrom = AppConstant.ORDER_FROM_ADMIN;
             var bookingCode = await _codeUtil.GenerateCode(orderFrom);
@@ -50,7 +58,8 @@ namespace MovieApi.Services.BookingService
                 Status = (int)AppConstant.StatusBooking.DONE,
                 Quantity = req.Seats.Count,
                 PriceValue = showTime.Price.PriceValue,
-                TotalPrice = showTime.Price.PriceValue * req.Seats.Count
+                TotalPrice = showTime.Price.PriceValue * req.Seats.Count,
+                CreatedBy = _userService.GetUserId(),
             };
 
             await _context.Bookings.AddAsync(booking);
@@ -71,7 +80,8 @@ namespace MovieApi.Services.BookingService
                 var bookingSeat = new BookingSeat
                 {
                     BookingId = booking.Id,
-                    SeatId = seat
+                    SeatId = seat,
+                    CreatedBy = _userService.GetUserId()
                 };
                 await _context.BookingSeats.AddAsync(bookingSeat);
             }
@@ -89,10 +99,15 @@ namespace MovieApi.Services.BookingService
                 .Select(x => x.SeatNumber)
                 .ToListAsync() ?? throw new Exception("Seats not found");
 
-            return (bookingResult, listSeat);
+            var user = await _context
+                .Users
+                .FirstOrDefaultAsync(x => x.Id == _userService.GetUserId()) ?? 
+                throw new Exception("User not found");
+
+            return (bookingResult, listSeat, user);
         }
 
-        public async Task<(Booking, List<string>)> BookingFromCustomerAsync(CreateBookingRequest req)
+        public async Task<(Booking, List<string>, User)> BookingFromCustomerAsync(CreateBookingRequest req)
         {
             var orderFrom = AppConstant.ORDER_FROM_CUSTOMER;
             var bookingCode = await _codeUtil.GenerateCode(orderFrom);
@@ -124,13 +139,18 @@ namespace MovieApi.Services.BookingService
             {
                 ShowtimeId = req.ShowtimeId,
                 BookingCode = bookingCode,
-                CustomerName = await _codeUtil.GenerateCustomerName(),
+                CustomerId = _userService.GetUserId(),
+                CustomerName = _userService.GetUsername(),
                 OrderFrom = orderFrom,
                 BookingDate = DateTime.Now,
                 PaymentType = req.PaymentType,
                 IsPaid = isPaid,
                 Status = bookingStatus,
-                PaymentProof = paymentProof
+                PaymentProof = paymentProof,
+                Quantity = req.Seats.Count,
+                PriceValue = showTime.Price.PriceValue,
+                TotalPrice = showTime.Price.PriceValue * req.Seats.Count,
+                CreatedBy = _userService.GetUserId(),
             };
 
             await _context.Bookings.AddAsync(booking);
@@ -151,7 +171,8 @@ namespace MovieApi.Services.BookingService
                 var bookingSeat = new BookingSeat
                 {
                     BookingId = booking.Id,
-                    SeatId = seat
+                    SeatId = seat,
+                    CreatedBy = _userService.GetUserId()
                 };
                 await _context.BookingSeats.AddAsync(bookingSeat);
             }
@@ -169,7 +190,12 @@ namespace MovieApi.Services.BookingService
                 .Select(x => x.SeatNumber)
                 .ToListAsync() ?? throw new Exception("Seats not found");
 
-            return (bookingResult, listSeat);
+            var user = await _context
+                .Users
+                .FirstOrDefaultAsync(x => x.Id == _userService.GetUserId()) ??
+                throw new Exception("User not found");
+
+            return (bookingResult, listSeat, user);
         }
 
         private async Task<bool> IsSeatAvailable(string seatId,  string studioId)

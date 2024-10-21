@@ -8,6 +8,7 @@ using MovieApi.Services.RoleService;
 using MovieApi.Services.ShowtimeService;
 using MovieApi.Services.StudioService;
 using MovieApi.Services.UploadService;
+using MovieApi.Services.UserService;
 using MovieApi.Utilities;
 
 namespace MovieApi.Extensions
@@ -39,6 +40,8 @@ namespace MovieApi.Extensions
             services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<BookingMapper>();
             services.AddScoped<CodeUtil>();
+            services.AddHttpContextAccessor();
+            services.AddScoped<IUserService, UserService>();
         }
     }
 }

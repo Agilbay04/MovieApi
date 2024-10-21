@@ -46,7 +46,13 @@ namespace MovieApi.Responses.Booking
         [JsonPropertyName("created_at")]
         public string? CreatedAt { get; set; }
 
+        [JsonPropertyName("created_by")]
+        public string? CreatedBy { get; set; }
+
         [JsonPropertyName("updated_at")]
         public string? UpdatedAt { get; set; }
+
+        [JsonPropertyName("updated_by")]
+        public string? UpdatedBy { get; set; }
     }
 }

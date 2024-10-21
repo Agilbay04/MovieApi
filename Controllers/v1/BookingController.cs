@@ -28,8 +28,8 @@ namespace MovieApi.Controllers.v1
         {
             try
             {
-                var (booking, seats) = await _bookingService.BookingFromAdminAsync(req);
-                var bookingDto = await _bookingMapper.ToDto(booking, seats);
+                var (booking, seats, user) = await _bookingService.BookingFromAdminAsync(req);
+                var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
                 return Ok(bookingDto);
             }
             catch(Exception ex)
@@ -45,8 +45,8 @@ namespace MovieApi.Controllers.v1
         {
             try
             {
-                var (booking, seats) = await _bookingService.BookingFromCustomerAsync(req);
-                var bookingDto = await _bookingMapper.ToDto(booking, seats);
+                var (booking, seats, user) = await _bookingService.BookingFromCustomerAsync(req);
+                var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
                 return Ok(bookingDto);
             }   
             catch(Exception ex)

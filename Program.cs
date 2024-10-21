@@ -110,7 +110,7 @@ builder.Services.AddApplicationServices();
 var app = builder.Build();
 
 // Configure middleware
-// app.UseMiddleware<ApiResponseMiddleware>();
+// app.UseMiddleware<ApiResponseMiddleware>();   
 
 // Seed database
 using (var scope = app.Services.CreateScope())

@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using MovieApi.Utilities;
 
 namespace MovieApi.Requests.Booking
 {
