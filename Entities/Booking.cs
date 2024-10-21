@@ -20,6 +20,15 @@ namespace MovieApi.Entities
 
         public virtual Showtime? Showtime { get; set; }
 
+        [MaxLength(100)]
+        [ForeignKey("User")]
+        public string? CustomerId { get; set; }
+
+        [MaxLength(100)]
+        public string? CustomerName { get; set; }
+
+        public virtual User? User { get; set; }
+
         [Required]
         public DateTime BookingDate { get; set; }
 
@@ -28,8 +37,11 @@ namespace MovieApi.Entities
         public string PaymentType { get; set; }
         
         [Required]
+        public bool IsPaid { get; set; }
+
+        [Required]
         [MaxLength(1)]
-        public int PaymentStatus { get; set; }
+        public int? Status { get; set; }
 
         public string? PaymentProof { get; set; }
 

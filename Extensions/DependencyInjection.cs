@@ -1,5 +1,6 @@
 using MovieApi.Mappers;
 using MovieApi.Services.AuthService;
+using MovieApi.Services.BookingService;
 using MovieApi.Services.GenreService;
 using MovieApi.Services.MovieService;
 using MovieApi.Services.PriceService;
@@ -35,6 +36,9 @@ namespace MovieApi.Extensions
             services.AddScoped<IShowtimeService, ShowtimeService>();
             services.AddScoped<ShowtimeMapper>();
             services.AddScoped<IUploadService, UploadService>();
+            services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<BookingMapper>();
+            services.AddScoped<CodeUtil>();
         }
     }
 }
