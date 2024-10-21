@@ -99,16 +99,6 @@ namespace MovieApi.Services.StudioService
             if (id == null)
                 throw new Exception("Id is required");
             
-            var studioInUsed = await _context
-                .Seats
-                .Where(s => s.StudioId == id 
-                    && s.Deleted == false
-                    && s.IsAvailable == false)
-                .FirstOrDefaultAsync();
-            
-            if (studioInUsed != null)
-                throw new Exception("There is a seat in used in this studio");
-
             var (studio, seats) = await FindByIdAsync(id);
 
             studio.Deleted = true;
@@ -142,8 +132,7 @@ namespace MovieApi.Services.StudioService
                     StudioId = studioId,
                     SeatNumber = $"{startRow}{startColumn}",
                     Row = startRow.ToString(),
-                    Column = startColumn,
-                    IsAvailable = true
+                    Column = startColumn
                 });
 
                 startColumn++;

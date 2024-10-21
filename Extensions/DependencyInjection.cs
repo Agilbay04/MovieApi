@@ -1,3 +1,4 @@
+using MovieApi.Jobs;
 using MovieApi.Mappers;
 using MovieApi.Services.AuthService;
 using MovieApi.Services.BookingService;
@@ -5,11 +6,13 @@ using MovieApi.Services.GenreService;
 using MovieApi.Services.MovieService;
 using MovieApi.Services.PriceService;
 using MovieApi.Services.RoleService;
+using MovieApi.Services.SchedulerService;
 using MovieApi.Services.ShowtimeService;
 using MovieApi.Services.StudioService;
 using MovieApi.Services.UploadService;
 using MovieApi.Services.UserService;
 using MovieApi.Utilities;
+using Quartz;
 
 namespace MovieApi.Extensions
 {
@@ -42,6 +45,14 @@ namespace MovieApi.Extensions
             services.AddScoped<CodeUtil>();
             services.AddHttpContextAccessor();
             services.AddScoped<IUserService, UserService>();
+            services.AddSingleton<ISchedulerService, SchedulerService>();
+            services.AddScoped<CancelBookingJob>();
+
+            // Cofigure Quartz
+            services.AddQuartz(options => {
+                options.UseMicrosoftDependencyInjectionJobFactory();
+            });
+            services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
         }
     }
 }

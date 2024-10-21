@@ -52,7 +52,7 @@ namespace MovieApi.Services.BookingService
 
             var listSeatId = await _context
                 .BookingSeats
-                .Where(x => x.BookingId == booking.Id)
+                .Where(x => x.BookingId == booking.Id && x.Deleted == false)
                 .Select(x => x.SeatId)
                 .ToListAsync();
 
@@ -92,7 +92,7 @@ namespace MovieApi.Services.BookingService
             
             var listSeatId = await _context
                 .BookingSeats
-                .Where(x => x.BookingId == booking.Id)
+                .Where(x => x.BookingId == booking.Id && x.Deleted == false)
                 .Select(x => x.SeatId)
                 .ToListAsync();
 
@@ -164,15 +164,8 @@ namespace MovieApi.Services.BookingService
 
             foreach (var seat in req.Seats)
             {
-                if (!await IsSeatAvailable(seat, showTime.StudioId))
+                if (!await IsSeatAvailable(seat, showTime.Id))
                     throw new Exception("Seat not available");
-                
-                var setSeatToReserved = _context
-                    .Seats
-                    .FirstOrDefault(x => x.Id == seat && x.StudioId == showTime.StudioId) ??
-                    throw new Exception("Seat not found");
-                setSeatToReserved.IsAvailable = false;
-                _context.Seats.Update(setSeatToReserved);
 
                 var bookingSeat = new BookingSeat
                 {
@@ -255,15 +248,8 @@ namespace MovieApi.Services.BookingService
 
             foreach (var seat in req.Seats)
             {
-                if (!await IsSeatAvailable(seat, showTime.StudioId))
+                if (!await IsSeatAvailable(seat, showTime.Id))
                     throw new Exception("Seat not available");
-                
-                var setSeatToReserved = _context
-                    .Seats
-                    .FirstOrDefault(x => x.Id == seat && x.StudioId == showTime.StudioId) ??
-                    throw new Exception("Seat not found");
-                setSeatToReserved.IsAvailable = false;
-                _context.Seats.Update(setSeatToReserved);
 
                 var bookingSeat = new BookingSeat
                 {
@@ -318,25 +304,25 @@ namespace MovieApi.Services.BookingService
             _context.Bookings.Update(booking);
             await _context.SaveChangesAsync();
             
-            var listSeatId = await _context
+            var bookingSeats = await _context
                 .BookingSeats
-                .Where(x => x.BookingId == booking.Id)
-                .Select(x => x.SeatId)
+                .Where(x => x.BookingId == booking.Id && x.Deleted == false)
                 .ToListAsync() ?? throw new Exception("Booking seats not found");
-
+            
             var listSeat = await _context
                 .Seats
-                .Where(x => listSeatId.Contains(x.Id))
+                .Where(x => bookingSeats.Select(x => x.SeatId).Contains(x.Id))
+                .Select(x => x.SeatNumber)
                 .ToListAsync() ?? throw new Exception("Seats not found");
-            
+
             if (!req.IsConfirmed)
             {
-                foreach (var seat in listSeat)
+                foreach (var seat in bookingSeats)
                 {
-                    seat.IsAvailable = true;
-                    _context.Seats.Update(seat);
-                    await _context.SaveChangesAsync();
+                    seat.Deleted = true;
+                    _context.BookingSeats.Update(seat);
                 }
+                await _context.SaveChangesAsync();
             }
 
             var user = await _context
@@ -344,7 +330,7 @@ namespace MovieApi.Services.BookingService
                 .FirstOrDefaultAsync(x => x.Id == booking.CreatedBy) ??
                 throw new Exception("User not found");
             
-            return (booking, listSeat.Select(x => x.SeatNumber).ToList(), user);
+            return (booking, listSeat, user);
         }
 
         public async Task<(Booking, List<string>, User)> UploadPaymentProofAsync(IFormFile? paymentProof, string bookingCode)
@@ -365,7 +351,7 @@ namespace MovieApi.Services.BookingService
             
             var listSeatId = await _context
                 .BookingSeats
-                .Where(x => x.BookingId == booking.Id)
+                .Where(x => x.BookingId == booking.Id && x.Deleted == false)
                 .Select(x => x.SeatId)
                 .ToListAsync() ?? throw new Exception("Seats not found");
 
@@ -383,14 +369,18 @@ namespace MovieApi.Services.BookingService
             return (booking, listSeat, user);
         }
 
-        private async Task<bool> IsSeatAvailable(string seatId,  string studioId)
+        private async Task<bool> IsSeatAvailable(string seatId, string showtimeId)
         {
-            var seat = await _context
-                .Seats
-                .FirstOrDefaultAsync(x => x.Id == seatId && x.StudioId == studioId) ?? 
-                throw new Exception("Seat not found");
+            var isSeatAvailable = await _context
+                .Bookings
+                .Join(_context.BookingSeats, b => b.Id, bs => bs.BookingId, (b, bs) => new { b, bs })
+                .Where(x => x.bs.SeatId == seatId && x.b.ShowtimeId == showtimeId && x.bs.Deleted == false)
+                .FirstOrDefaultAsync();
             
-            return seat.IsAvailable;    
+            if (isSeatAvailable != null)
+                return false;
+            
+            return true;    
         }
     }
 }

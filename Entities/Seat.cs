@@ -25,9 +25,6 @@ namespace MovieApi.Entities
         [MaxLength(1)]
         public int Column { get; set; }
 
-        [Required]
-        public bool IsAvailable { get; set; } = true;
-
         public bool Deleted { get; set; } = false;
 
         public DateTime? CreatedAt { get; set; }

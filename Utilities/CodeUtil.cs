@@ -15,16 +15,18 @@ namespace MovieApi.Utilities
         public async Task<string> GenerateCode(string orderFrom)
         {
             var bookings = await _context.Bookings
-                .Select(b => b.Id)
+                .Select(b => b.BookingCode)
                 .ToListAsync();
             string bookingCode = "";
             
             if (orderFrom == AppConstant.ORDER_FROM_ADMIN)
             {
+                bookings = bookings.Where(b => b.StartsWith("TX1A")).ToList();
                 bookingCode = $"TX1A{bookings.Count + 1}";
             }
             else if (orderFrom == AppConstant.ORDER_FROM_CUSTOMER)
             {
+                bookings = bookings.Where(b => b.StartsWith("TX2C")).ToList();
                 bookingCode = $"TX2C{bookings.Count + 1}";
             }
 

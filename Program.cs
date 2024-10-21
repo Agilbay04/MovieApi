@@ -7,10 +7,12 @@ using MovieApi.Database;
 using MovieApi.Extensions;
 using MovieApi.Middlewares;
 using MovieApi.Seeders;
+using MovieApi.Services.SchedulerService;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// Add services to the container;
 
 // Configure environment
 builder.Configuration
@@ -138,5 +140,9 @@ app.UseCors("CorsPolicy");
 
 // Cofingure map controllers
 app.MapControllers();
+
+// Call scheduler job
+var schedulerService = app.Services.GetRequiredService<ISchedulerService>();
+await schedulerService.ScheduleJobsAsync();
 
 app.Run();

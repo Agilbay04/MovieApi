@@ -11,8 +11,7 @@ namespace MovieApi.Mappers
             {
                 return new SeatResponse
                 {
-                    SeatNumber = seat.SeatNumber,
-                    IsAvailable = seat.IsAvailable
+                    SeatNumber = seat.SeatNumber
                 };
             });
         }
