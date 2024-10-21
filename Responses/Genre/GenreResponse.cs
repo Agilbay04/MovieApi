@@ -1,18 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace MovieApi.Responses.Genre
 {
     public class GenreResponse
     {
+        [JsonPropertyName("id")]
         public string? Id { get; set; }
-        
+
+        [JsonPropertyName("name")]        
         public string? Name { get; set; }
 
+        [JsonPropertyName("created_at")]
         public string? CreatedAt { get; set; }
 
+        [JsonPropertyName("updated_at")]
         public string? UpdatedAt { get; set; }
     }
 }

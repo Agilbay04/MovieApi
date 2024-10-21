@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Responses.Movie;
+using MovieApi.Utilities;
 
 namespace MovieApi.Mappers
 {
@@ -9,9 +10,12 @@ namespace MovieApi.Mappers
     {
         private readonly AppDbContext _context;
 
-        public MovieMapper(AppDbContext context)
+        private readonly DateUtil _dateUtil;
+
+        public MovieMapper(AppDbContext context, DateUtil dateUtil)
         {
             _context = context;
+            _dateUtil = dateUtil;
         }
 
         public async Task<MovieResponse> ToDto(Movie movie)
@@ -20,12 +24,14 @@ namespace MovieApi.Mappers
             {
                 Id = movie.Id,
                 Title = movie.Title,
+                ImageUrl = movie.ImageUrl,
                 Duration = movie.Duration,
                 Description = movie.Description,
                 IsPublished = movie.IsPublished ? 
                     "Published" : "Unpublished",
-                CreatedAt = movie.CreatedAt?.ToString("dd MMM yyyy HH:mm:ss"),
-                UpdatedAt = movie.UpdatedAt?.ToString("dd MMM yyyy HH:mm:ss"),
+                ReleaseDate = _dateUtil.GetDateToString(movie.ReleaseDate),
+                CreatedAt = _dateUtil.GetDateTimeToString(movie?.CreatedAt),
+                UpdatedAt = _dateUtil.GetDateTimeToString(movie?.UpdatedAt),
 
             };
 

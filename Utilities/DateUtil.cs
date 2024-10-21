@@ -25,6 +25,6 @@ namespace MovieApi.Utilities
             return TimeSpan.ParseExact(time, @"hh\:mm", CultureInfo.InvariantCulture);
         }
 
-        public bool IsDateInRangeOneWeek(DateTime? date) => date > DateTime.Now.AddDays(-7);
+        public bool IsDateInRangeOneWeek(DateTime? date) => date > DateTime.Now.AddDays(-7) || date >= DateTime.Now;
     }
 }

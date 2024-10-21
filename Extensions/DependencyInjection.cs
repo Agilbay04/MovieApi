@@ -6,6 +6,7 @@ using MovieApi.Services.PriceService;
 using MovieApi.Services.RoleService;
 using MovieApi.Services.ShowtimeService;
 using MovieApi.Services.StudioService;
+using MovieApi.Services.UploadService;
 using MovieApi.Utilities;
 
 namespace MovieApi.Extensions
@@ -33,6 +34,7 @@ namespace MovieApi.Extensions
             services.AddScoped<PriceUtil>();
             services.AddScoped<IShowtimeService, ShowtimeService>();
             services.AddScoped<ShowtimeMapper>();
+            services.AddScoped<IUploadService, UploadService>();
         }
     }
 }

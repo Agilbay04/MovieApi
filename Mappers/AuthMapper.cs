@@ -25,7 +25,8 @@ namespace MovieApi.Mappers
                 return new RegisterResponse
                 {
                     Username = user.Username,
-                    Name = user.Name
+                    Name = user.Name,
+                    ImageUrl = user.ImageUrl
                 };
             });
         }

@@ -58,7 +58,7 @@ namespace MovieApi.Controllers
 
         [HttpPost]
         [ProducesResponseType(type: typeof(MovieResponse), statusCode: StatusCodes.Status201Created)]
-        public async Task<ActionResult<MovieResponse>> CreateMovieAsync(CreateMovieRequest req)
+        public async Task<ActionResult<MovieResponse>> CreateMovieAsync([FromForm] CreateMovieRequest req)
         {
             try
             {
@@ -74,7 +74,7 @@ namespace MovieApi.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(type: typeof(MovieResponse), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<Movie>> UpdateMovieAsync(UpdateMovieRequest req, string id)
+        public async Task<ActionResult<Movie>> UpdateMovieAsync([FromForm] UpdateMovieRequest req, string id)
         {
             try 
             {

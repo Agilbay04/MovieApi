@@ -13,6 +13,8 @@ namespace MovieApi.Entities
         [MaxLength(100)]
         public string Name { get; set; }
 
+        public string? ImageUrl { get; set; }
+
         [Required]
         [MaxLength(50)]
         public string Username { get; set; }

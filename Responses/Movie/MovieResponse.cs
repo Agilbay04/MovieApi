@@ -10,6 +10,9 @@ namespace MovieApi.Responses.Movie
         [JsonPropertyName("title")]
         public string? Title { get; set; }
 
+        [JsonPropertyName("image_url")]
+        public string? ImageUrl { get; set; }
+
         [JsonPropertyName("duration")]
         public int? Duration { get; set; }
 
@@ -18,6 +21,9 @@ namespace MovieApi.Responses.Movie
 
         [JsonPropertyName("is_published")]
         public string? IsPublished { get; set; }
+
+        [JsonPropertyName("release_date")]
+        public string? ReleaseDate { get; set; }
 
         [JsonPropertyName("list_of_genres")]
         public List<string> ListOfGenres { get; set; }

@@ -6,6 +6,8 @@ namespace MovieApi.Requests.Auth
     {
         [Required]
         public string Name { get; set; }
+
+        public IFormFile? ProfilePicture { get; set; }
         
         [Required]
         [MinLength(5)]

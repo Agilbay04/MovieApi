@@ -1,10 +1,10 @@
-using System.Text.Json.Serialization;
-
 namespace MovieApi.Requests
 {
     public class CreateMovieRequest
     {
         public string Title { get; set; }
+
+        public IFormFile? Poster { get; set; }
         
         public string Description { get; set; }
         

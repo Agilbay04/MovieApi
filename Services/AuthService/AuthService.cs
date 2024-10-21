@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests.Auth;
+using MovieApi.Services.UploadService;
 using MovieApi.Utilities;
 
 namespace MovieApi.Services.AuthService
@@ -13,10 +14,13 @@ namespace MovieApi.Services.AuthService
 
         private readonly JwtUtil _jwtUtil;
 
-        public AuthService(AppDbContext context, JwtUtil jwtUtil)
+        private readonly IUploadService _uploadService;
+
+        public AuthService(AppDbContext context, JwtUtil jwtUtil, IUploadService uploadService)
         {
             _context = context;
             _jwtUtil = jwtUtil;
+            _uploadService = uploadService;
         }
 
         public async Task<(User, string)> Login(UserLoginRequest req)
@@ -44,6 +48,12 @@ namespace MovieApi.Services.AuthService
             var user = await _context.Users
                 .FirstOrDefaultAsync(x => x.Username == req.Username && 
                     x.Deleted == false);
+            string imageUrl = "";
+
+            if (req.ProfilePicture != null)
+            {
+                imageUrl = await _uploadService.UploadFileAsync(req.ProfilePicture, "Customers");
+            }
 
             if (user != null)
             {
@@ -68,6 +78,7 @@ namespace MovieApi.Services.AuthService
                 Salt = hashedPassword.salt,
                 Password = hashedPassword.hashedPassword,
                 RoleId = roleId,
+                ImageUrl = imageUrl
             };
             
             await _context.Users.AddAsync(newUser);
@@ -82,6 +93,12 @@ namespace MovieApi.Services.AuthService
             var user = await _context.Users
                 .FirstOrDefaultAsync(x => x.Username == req.Username && 
                     x.Deleted == false);
+            var imageUrl = "";
+
+            if (req.ProfilePicture != null)
+            {
+                imageUrl = await _uploadService.UploadFileAsync(req.ProfilePicture, "Admins");
+            }
 
             if (user != null)
             {
@@ -106,6 +123,7 @@ namespace MovieApi.Services.AuthService
                 Salt = hashedPassword.salt,
                 Password = hashedPassword.hashedPassword,
                 RoleId = roleId,
+                ImageUrl = imageUrl
             };
             
             await _context.Users.AddAsync(newUser);

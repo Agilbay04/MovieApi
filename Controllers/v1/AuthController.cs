@@ -44,7 +44,7 @@ namespace MovieApi.Controllers.v1
 
         [HttpPost("customer/register")]
         [ProducesResponseType(type: typeof(RegisterResponse), statusCode: StatusCodes.Status201Created)]
-        public async Task<ActionResult<RegisterResponse>> Register(UserRegisterRequest req)
+        public async Task<ActionResult<RegisterResponse>> Register([FromForm] UserRegisterRequest req)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace MovieApi.Controllers.v1
 
         [HttpPost("admin/register")]
         [ProducesResponseType(type: typeof(RegisterResponse), statusCode: StatusCodes.Status201Created)]
-        public async Task<ActionResult<RegisterResponse>> RegisterAdmin(UserRegisterRequest req)
+        public async Task<ActionResult<RegisterResponse>> RegisterAdmin([FromForm] UserRegisterRequest req)
         {
             try
             {

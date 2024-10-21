@@ -3,6 +3,8 @@ namespace MovieApi.Requests.Movie
     public class UpdateMovieRequest
     {
         public string Title { get; set; }
+
+        public IFormFile? Poster { get; set; }
         
         public string Description { get; set; }
         

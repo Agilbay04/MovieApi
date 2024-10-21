@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.Contracts;
 
 namespace MovieApi.Entities
 {
@@ -11,6 +12,8 @@ namespace MovieApi.Entities
         [Required]
         [MaxLength(100)]
         public string Title { get; set; }
+        
+        public string? ImageUrl { get; set; }
         
         [Required]
         [MaxLength(255)]
