@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MovieApi.Database;
 using MovieApi.Extensions;
-using MovieApi.Middlewares;
 using MovieApi.Seeders;
 using MovieApi.Services.SchedulerService;
 using Quartz;
@@ -101,7 +100,10 @@ builder.Services.AddCors(options =>
 });
 
 // Add controllers
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options => 
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+});
 
 // Configure routes name to lowercase
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
@@ -109,10 +111,7 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 // Add services
 builder.Services.AddApplicationServices();
 
-var app = builder.Build();
-
-// Configure middleware
-// app.UseMiddleware<ApiResponseMiddleware>();   
+var app = builder.Build();   
 
 // Seed database
 using (var scope = app.Services.CreateScope())

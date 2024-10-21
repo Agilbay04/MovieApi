@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Validations.Rules;
 using MovieApi.Mappers;
 using MovieApi.Requests.Auth;
+using MovieApi.Responses;
 using MovieApi.Responses.Auth;
 using MovieApi.Services.AuthService;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MovieApi.Controllers.v1
 {
@@ -21,6 +24,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPost("login")]
+        [EndpointSummary("Login user")]
+        [EndpointDescription("Login user role admin and customer")]
+        [Produces("application/json")]
         [ProducesResponseType(type: typeof(LoginResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<LoginResponse>> Login(UserLoginRequest req)
         {
@@ -29,7 +35,6 @@ namespace MovieApi.Controllers.v1
                 var (user, token) = await _authService.Login(req);
                 var loginDto = await _authMapper.ToDtoLogin(user, token);
                 return Ok(loginDto);
-
             }
             catch(UnauthorizedAccessException ex)
             {
@@ -43,8 +48,11 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPost("customer/register")]
+        [EndpointSummary("Register customer")]
+        [EndpointDescription("Register user role customer")]
+        [Produces("application/json")]
         [ProducesResponseType(type: typeof(RegisterResponse), statusCode: StatusCodes.Status201Created)]
-        public async Task<ActionResult<RegisterResponse>> Register([FromForm] UserRegisterRequest req)
+        public async Task<ActionResult<Result<RegisterResponse>>> Register([FromForm] UserRegisterRequest req)
         {
             try
             {
@@ -59,6 +67,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPost("admin/register")]
+        [EndpointSummary("Register admin")]
+        [EndpointDescription("Register user role admin")]
+        [Produces("application/json")]
         [ProducesResponseType(type: typeof(RegisterResponse), statusCode: StatusCodes.Status201Created)]
         public async Task<ActionResult<RegisterResponse>> RegisterAdmin([FromForm] UserRegisterRequest req)
         {

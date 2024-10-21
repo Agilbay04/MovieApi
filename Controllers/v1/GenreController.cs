@@ -23,6 +23,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpGet("{id}")]
+        [EndpointSummary("Get genre by id")]
+        [EndpointDescription("Get genre by id from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(GenreResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<GenreResponse>> FindGenreByIdAsync(string id)
         {
@@ -39,6 +42,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpGet]
+        [EndpointSummary("Get all genres")]
+        [EndpointDescription("Get all genres from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(List<GenreResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<List<GenreResponse>>> FindAllGenresAsync()
         {   
@@ -55,6 +61,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPost]
+        [EndpointSummary("Create genre")]
+        [EndpointDescription("Create genre from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(GenreResponse), statusCode: StatusCodes.Status201Created)]
         public async Task<ActionResult<GenreResponse>> CreateGenreAsync(CreateGenreRequest req)
         {
@@ -75,6 +84,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPut("{id}")]
+        [EndpointSummary("Update genre")]
+        [EndpointDescription("Update genre from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(GenreResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<GenreResponse>> UpdateGenreAsync(UpdateGenreRequest req, string id)
         {
@@ -91,6 +103,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpDelete("{id}")]
+        [EndpointSummary("Delete genre")]
+        [EndpointDescription("Delete genre from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<GenreResponse>> DeleteGenreAsync(string id)
         {

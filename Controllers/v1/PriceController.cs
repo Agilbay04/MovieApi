@@ -22,6 +22,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpGet("{id}")]
+        [EndpointSummary("Find price by id")]
+        [EndpointDescription("Find price by id from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(PriceResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<PriceResponse>> FindPriceByIdAsync(string id)
@@ -39,6 +41,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpGet]
+        [EndpointSummary("Find all prices")]
+        [EndpointDescription("Find all prices from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(List<PriceResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<PriceResponse>> FindAllPricesAsync()
@@ -56,6 +60,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPost]
+        [EndpointSummary("Create price")]
+        [EndpointDescription("Create price from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(PriceResponse), statusCode: StatusCodes.Status201Created)]
         public async Task<ActionResult<PriceResponse>> CreatePriceAsync(CreatePriceRequest req)
@@ -73,6 +79,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPut("{id}")]
+        [EndpointSummary("Update price")]
+        [EndpointDescription("Update price from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(PriceResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<PriceResponse>> UpdatePriceAsync(UpdatePriceRequest req, string id)
@@ -90,6 +98,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpDelete("{id}")]
+        [EndpointSummary("Delete price")]
+        [EndpointDescription("Delete price from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(PriceResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<PriceResponse>> DeletePriceAsync(string id)

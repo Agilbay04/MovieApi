@@ -22,6 +22,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpGet("{id}")]
+        [EndpointSummary("Find role by id")]
+        [EndpointDescription("Find role by id from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(RoleResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<IActionResult> FindRoleById(string id)
         {
@@ -38,6 +41,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpGet("code/{code}")]
+        [EndpointSummary("Find role by code")]
+        [EndpointDescription("Find role by code from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(RoleResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<IActionResult> FindRoleByCode(string code)
         {
@@ -54,6 +60,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpGet]
+        [EndpointSummary("Find all roles")]
+        [EndpointDescription("Find all roles from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(List<RoleResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<IActionResult> FindAllRolesAsync()
         {
@@ -70,6 +79,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPost]
+        [EndpointSummary("Create role")]
+        [EndpointDescription("Create role from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(RoleResponse), statusCode: StatusCodes.Status201Created)]
         public async Task<ActionResult<RoleResponse>> CreateRoleAsync(CreateRoleRequest request)
         {
@@ -86,6 +98,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPut("{id}")]
+        [EndpointSummary("Update role")]
+        [EndpointDescription("Update role from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(RoleResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<RoleResponse>> UpdateRoleAsync(UpdateRoleRequest request, string id)
         {
@@ -102,6 +117,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpDelete("{id}")]
+        [EndpointSummary("Delete role")]
+        [EndpointDescription("Delete role from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<RoleResponse>> DeleteRoleAsync(string id)
         {

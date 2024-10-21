@@ -22,7 +22,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "admin")]
+        [EndpointSummary("Find showtime by id")]
+        [EndpointDescription("Find showtime by id from admin or customer")]
+        [Authorize]
         [ProducesResponseType(type: typeof(ShowtimeResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<ShowtimeResponse>> FindShowtimeByIdAsync(string id)
         {
@@ -39,7 +41,9 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        [EndpointSummary("Find all showtimes")]
+        [EndpointDescription("Find all showtimes from admin or customer")]
+        [Authorize]
         [ProducesResponseType(type: typeof(List<ShowtimeResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<List<ShowtimeResponse>>> FindAllShowtimesAsync()
         {
@@ -56,6 +60,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPost]
+        [EndpointSummary("Create showtime")]
+        [EndpointDescription("Create showtime from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(ShowtimeResponse), statusCode: StatusCodes.Status201Created)]
         public async Task<ActionResult<ShowtimeResponse>> CreateShowtimeAsync(CreateShowtimeRequest req)
@@ -77,6 +83,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPut("{id}")]
+        [EndpointSummary("Update showtime")]
+        [EndpointDescription("Update showtime from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(ShowtimeResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<ShowtimeResponse>> UpdateShowtimeAsync(UpdateShowtimeRequest req, string id)
@@ -94,6 +102,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpDelete("{id}")]
+        [EndpointSummary("Delete showtime")]
+        [EndpointDescription("Delete showtime from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(ShowtimeResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<ShowtimeResponse>> DeleteShowtimeAsync(string id)

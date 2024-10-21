@@ -32,6 +32,9 @@ namespace MovieApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [EndpointSummary("Find movie by id")]
+        [EndpointDescription("Find movie by id from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(MovieResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<Movie>> FindMovieByIdAsync(string id)
         {
@@ -48,6 +51,9 @@ namespace MovieApi.Controllers
         }
 
         [HttpGet]
+        [EndpointSummary("Find all movies")]
+        [EndpointDescription("Find all movies from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(List<MovieResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<List<MovieResponse>>> FindAllMoviesAsync()
         {
@@ -57,6 +63,9 @@ namespace MovieApi.Controllers
         }
 
         [HttpPost]
+        [EndpointSummary("Create movie")]
+        [EndpointDescription("Create movie from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(MovieResponse), statusCode: StatusCodes.Status201Created)]
         public async Task<ActionResult<MovieResponse>> CreateMovieAsync([FromForm] CreateMovieRequest req)
         {
@@ -73,6 +82,9 @@ namespace MovieApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [EndpointSummary("Update movie")]
+        [EndpointDescription("Update movie from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(MovieResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<Movie>> UpdateMovieAsync([FromForm] UpdateMovieRequest req, string id)
         {
@@ -89,6 +101,9 @@ namespace MovieApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [EndpointSummary("Delete movie")]
+        [EndpointDescription("Delete movie from admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<MovieResponse>> DeleteMovieAsync(string id)
         {

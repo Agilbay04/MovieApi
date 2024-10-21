@@ -21,6 +21,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpGet("{id}")]
+        [EndpointSummary("Find studio by id")]
+        [EndpointDescription("Find studio by id from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(StudioResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<StudioResponse>> FindStudioByIdAsync(string id)
@@ -38,6 +40,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpGet]
+        [EndpointSummary("Find all studios")]
+        [EndpointDescription("Find all studios from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(List<StudioResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<List<StudioResponse>>> FindAllStudiosAsync()
@@ -55,6 +59,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPost]
+        [EndpointSummary("Create studio")]
+        [EndpointDescription("Create studio from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(StudioResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<StudioResponse>> CreateStudioAsync(CreateStudioRequest req)
@@ -72,6 +78,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpPut("{id}")]
+        [EndpointSummary("Update studio")]
+        [EndpointDescription("Update studio from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(StudioResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<StudioResponse>> UpdateStudioAsync(UpdateStudioRequest req, string id)
@@ -89,6 +97,8 @@ namespace MovieApi.Controllers.v1
         }
 
         [HttpDelete("{id}")]
+        [EndpointSummary("Delete studio")]
+        [EndpointDescription("Delete studio from admin")]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(type: typeof(StudioResponse), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<StudioResponse>> DeleteStudioAsync(string id)
