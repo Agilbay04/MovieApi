@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MovieApi.Requests.Genre
 {
-    public class CreateGenreRequest : BaseRequest
+    public class CreateGenreRequest
     {
         [Required]
         public string Name { get; set; }

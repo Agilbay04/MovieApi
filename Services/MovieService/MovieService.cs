@@ -4,6 +4,7 @@ using MovieApi.Entities;
 using MovieApi.Requests;
 using MovieApi.Requests.Movie;
 using MovieApi.Services.UploadService;
+using MovieApi.Services.UserService;
 using MovieApi.Utilities;
 
 namespace MovieApi.Services.MovieService
@@ -16,11 +17,18 @@ namespace MovieApi.Services.MovieService
 
         private readonly IUploadService _uploadService;
 
-        public MovieService(AppDbContext context, DateUtil dateUtil, IUploadService uploadService)
+        private readonly IUserService _userService;
+
+        public MovieService(
+            AppDbContext context, 
+            DateUtil dateUtil, 
+            IUploadService uploadService, 
+            IUserService userService)
         {
             _context = context;
             _dateUtil = dateUtil;
             _uploadService = uploadService;
+            _userService = userService;
         }
 
         public async Task<Movie> FindByIdAsync(string id)
@@ -54,7 +62,8 @@ namespace MovieApi.Services.MovieService
                 Duration = req.Duration,
                 ReleaseDate = releaseDate,
                 IsPublished = _dateUtil.IsDateInRangeOneWeek(releaseDate),
-                Description = req.Description
+                Description = req.Description,
+                CreatedBy = _userService.GetUserId(),
             };
             await _context.Movies.AddAsync(movie);
             await _context.SaveChangesAsync();
@@ -105,6 +114,7 @@ namespace MovieApi.Services.MovieService
             isMovieExists.ReleaseDate = releaseDate;
             isMovieExists.IsPublished = req.IsPublished;
             isMovieExists.UpdatedAt = DateTime.Now;
+            isMovieExists.UpdatedBy = _userService.GetUserId();
 
             if (req.ListOfGenres != null)
             {
@@ -154,6 +164,7 @@ namespace MovieApi.Services.MovieService
             
             movie.Deleted = true;
             movie.UpdatedAt = DateTime.Now;
+            movie.UpdatedBy = _userService.GetUserId();
             
             var movieGenres = await _context.MovieGenres
                 .Where(mg => mg.MovieId == id && 

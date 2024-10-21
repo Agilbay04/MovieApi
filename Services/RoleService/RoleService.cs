@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests.Role;
+using MovieApi.Services.UserService;
 
 namespace MovieApi.Services.RoleService
 {
@@ -9,9 +10,12 @@ namespace MovieApi.Services.RoleService
     {
         private readonly AppDbContext _context;
 
-        public RoleService(AppDbContext context)
+        private readonly IUserService _userService;
+
+        public RoleService(AppDbContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         public async Task<Role> FindByIdAsync(string id)
@@ -53,7 +57,8 @@ namespace MovieApi.Services.RoleService
             var role = new Role
             {
                 Code = req.Code,
-                Name = req.Name
+                Name = req.Name,
+                CreatedBy = _userService.GetUserId(),
             };
             await _context.Roles.AddAsync(role);
             await _context.SaveChangesAsync();
@@ -82,6 +87,7 @@ namespace MovieApi.Services.RoleService
             var role = await FindByIdAsync(id);
             role.Code = req.Code;
             role.Name = req.Name;
+            role.UpdatedBy = _userService.GetUserId();
             _context.Roles.Update(role);
             await _context.SaveChangesAsync();
             return role;
@@ -98,6 +104,7 @@ namespace MovieApi.Services.RoleService
 
             var role = await FindByIdAsync(id);
             role.Deleted = true;
+            role.UpdatedBy = _userService.GetUserId();
             _context.Roles.Update(role);
             await _context.SaveChangesAsync();
             return role;

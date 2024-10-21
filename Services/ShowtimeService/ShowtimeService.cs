@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests.Showtime;
+using MovieApi.Services.UserService;
 using MovieApi.Utilities;
 
 namespace MovieApi.Services.ShowtimeService
@@ -13,10 +14,13 @@ namespace MovieApi.Services.ShowtimeService
 
         private readonly DateUtil _dateUtil;
 
-        public ShowtimeService(AppDbContext context, DateUtil dateUtil)
+        private readonly IUserService _userService;
+
+        public ShowtimeService(AppDbContext context, DateUtil dateUtil, IUserService userService)
         {
             _context = context;
             _dateUtil = dateUtil;
+            _userService = userService;
         }
 
         public async Task<Showtime> FindByIdAsync(string id)
@@ -67,7 +71,8 @@ namespace MovieApi.Services.ShowtimeService
                 StudioId = req.StudioId,
                 PriceId = priceId,
                 StartTime = startTime,
-                PlayDate = playDate
+                PlayDate = playDate,
+                CreatedBy = _userService.GetUserId(),
             };
             await _context.Showtimes.AddAsync(showtime);
             await _context.SaveChangesAsync();
@@ -106,6 +111,7 @@ namespace MovieApi.Services.ShowtimeService
             showtime.PriceId = priceId;
             showtime.StartTime = startTime;
             showtime.PlayDate = playDate;
+            showtime.UpdatedBy = _userService.GetUserId();
             _context.Showtimes.Update(showtime);
             await _context.SaveChangesAsync();
             return showtime;
@@ -118,6 +124,7 @@ namespace MovieApi.Services.ShowtimeService
 
             var showtime = await FindByIdAsync(id);
             showtime.Deleted = true;
+            showtime.UpdatedBy = _userService.GetUserId();
             _context.Showtimes.Update(showtime);
             await _context.SaveChangesAsync();
             return showtime;

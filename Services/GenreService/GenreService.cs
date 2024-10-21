@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests.Genre;
+using MovieApi.Services.UserService;
 
 namespace MovieApi.Services.GenreService
 {
@@ -9,9 +10,12 @@ namespace MovieApi.Services.GenreService
     {
         private readonly AppDbContext _context;
 
-        public GenreService(AppDbContext context)
+        private readonly IUserService _userService;
+
+        public GenreService(AppDbContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         public async Task<Genre> FindByIdAsync(string id)
@@ -43,7 +47,7 @@ namespace MovieApi.Services.GenreService
             var genre = new Genre
             {
                 Name = req.Name,
-                CreatedBy = req.UserId
+                CreatedBy = _userService.GetUserId(),
             };
             await _context.Genres.AddAsync(genre);
             await _context.SaveChangesAsync();
@@ -56,7 +60,7 @@ namespace MovieApi.Services.GenreService
 
             genre.Name = req.Name;
             genre.UpdatedAt = DateTime.Now;
-            genre.UpdatedBy = req.UserId;
+            genre.UpdatedBy = _userService.GetUserId();
 
             _context.Genres.Update(genre);
             await _context.SaveChangesAsync();
@@ -76,6 +80,7 @@ namespace MovieApi.Services.GenreService
 
             genre.Deleted = true;
             genre.UpdatedAt = DateTime.Now;;
+            genre.UpdatedBy = _userService.GetUserId();
 
             _context.Genres.Update(genre);
             await _context.SaveChangesAsync();

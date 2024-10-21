@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests.Studio;
+using MovieApi.Services.UserService;
 
 namespace MovieApi.Services.StudioService
 {
@@ -9,9 +10,12 @@ namespace MovieApi.Services.StudioService
     {
         private readonly AppDbContext _context;
 
-        public StudioService(AppDbContext context)
+        private readonly IUserService _userService;
+
+        public StudioService(AppDbContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         public async Task<(Studio, IEnumerable<Seat>)> FindByIdAsync(string id)
@@ -48,6 +52,7 @@ namespace MovieApi.Services.StudioService
                 Name = req.Name,
                 Facility = req.Facility,
                 TotalSeats = req.TotalSeats,
+                CreatedBy = _userService.GetUserId(),
             };
             await _context.Studios.AddAsync(studio);
             await _context.SaveChangesAsync();
@@ -68,6 +73,7 @@ namespace MovieApi.Services.StudioService
             studio.Name = req.Name;
             studio.Facility = req.Facility;
             studio.TotalSeats = req.TotalSeats;
+            studio.UpdatedBy = _userService.GetUserId();
             _context.Studios.Update(studio);
             
             if (req.TotalSeats != studio.TotalSeats || req.RowPerSeats != 0)
@@ -106,6 +112,7 @@ namespace MovieApi.Services.StudioService
             var (studio, seats) = await FindByIdAsync(id);
 
             studio.Deleted = true;
+            studio.UpdatedBy = _userService.GetUserId();
             _context.Studios.Update(studio);
             _context.Seats.RemoveRange(seats);
             await _context.SaveChangesAsync();

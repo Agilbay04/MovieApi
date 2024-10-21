@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests.Price;
+using MovieApi.Services.UserService;
 
 namespace MovieApi.Services.PriceService
 {
@@ -9,9 +10,12 @@ namespace MovieApi.Services.PriceService
     {
         private readonly AppDbContext _context;
 
-        public PriceService(AppDbContext context)
+        private readonly IUserService _userService;
+
+        public PriceService(AppDbContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         public async Task<Price> FindByIdAsync(string id)
@@ -43,7 +47,8 @@ namespace MovieApi.Services.PriceService
                 Code = req.Code,
                 Name = req.Name,
                 Description = req.Description,
-                PriceValue = req.PriceValue
+                PriceValue = req.PriceValue,
+                CreatedBy = _userService.GetUserId(),
             };
             await _context.Prices.AddAsync(price);
             await _context.SaveChangesAsync();
@@ -60,6 +65,7 @@ namespace MovieApi.Services.PriceService
             price.Name = req.Name;
             price.Description = req.Description;
             price.PriceValue = req.PriceValue;
+            price.UpdatedBy = _userService.GetUserId();
             _context.Prices.Update(price);
             await _context.SaveChangesAsync();
             return price;
@@ -72,6 +78,7 @@ namespace MovieApi.Services.PriceService
 
             var price = await FindByIdAsync(id);
             price.Deleted = true;
+            price.UpdatedBy = _userService.GetUserId();
             _context.Prices.Update(price);
             await _context.SaveChangesAsync();
             return price;

@@ -329,11 +329,14 @@ namespace MovieApi.Services.BookingService
                 .Where(x => listSeatId.Contains(x.Id))
                 .ToListAsync() ?? throw new Exception("Seats not found");
             
-            foreach (var seat in listSeat)
+            if (!req.IsConfirmed)
             {
-                seat.IsAvailable = true;
-                _context.Seats.Update(seat);
-                await _context.SaveChangesAsync();
+                foreach (var seat in listSeat)
+                {
+                    seat.IsAvailable = true;
+                    _context.Seats.Update(seat);
+                    await _context.SaveChangesAsync();
+                }
             }
 
             var user = await _context
