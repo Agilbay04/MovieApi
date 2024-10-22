@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace MovieApi.Requests.Auth
 {
@@ -6,10 +7,12 @@ namespace MovieApi.Requests.Auth
     {
         [Required]
         [MinLength(5)]
+        [JsonPropertyName("username")]
         public string Username { get; set; }
 
         [Required]
         [MinLength(8)]
+        [JsonPropertyName("password")]
         public string Password { get; set; }   
     }
 }

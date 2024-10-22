@@ -1,3 +1,4 @@
+using log4net;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
@@ -10,6 +11,8 @@ namespace MovieApi.Services.BookingService
 {
     public class BookingService : IBookingService
     {
+        private static readonly ILog _log = LogManager.GetLogger(typeof(BookingService));
+
         private readonly AppDbContext _context;
 
         private readonly CodeUtil _codeUtil;
@@ -129,19 +132,31 @@ namespace MovieApi.Services.BookingService
 
         public async Task<(Booking, List<string>, User)> BookingFromAdminAsync(CreateBookingRequest req)
         {
+            _log.Info("Booking from admin: " + req.ToString());
             var orderFrom = AppConstant.ORDER_FROM_ADMIN;
             var bookingCode = await _codeUtil.GenerateCode(orderFrom);
 
             if (req.ShowtimeId == null)
+            {
+                _log.Error("Showtime is required");
                 throw new Exception("Showtime is required");
+            }
             
             if (req.Seats == null)
+            {
+                _log.Error("Seats is required");
                 throw new Exception("Seats is required");
+            }
 
             var showTime = await _context
                 .Showtimes
-                .FirstOrDefaultAsync(x => x.Id == req.ShowtimeId && x.Deleted == false) ??
+                .FirstOrDefaultAsync(x => x.Id == req.ShowtimeId && x.Deleted == false);
+            
+            if (showTime == null)
+            {
+                _log.Error("Showtime not found");
                 throw new Exception("Showtime not found");
+            }
 
             var booking = new Booking
             {
@@ -165,7 +180,10 @@ namespace MovieApi.Services.BookingService
             foreach (var seat in req.Seats)
             {
                 if (!await IsSeatAvailable(seat, showTime.Id))
+                {
+                    _log.Error("Seat not available");
                     throw new Exception("Seat not available");
+                }
 
                 var bookingSeat = new BookingSeat
                 {
@@ -194,6 +212,7 @@ namespace MovieApi.Services.BookingService
                 .FirstOrDefaultAsync(x => x.Id == _userService.GetUserId()) ?? 
                 throw new Exception("User not found");
 
+            _log.Info("Booking from admin success: " + bookingResult.BookingCode);
             return (bookingResult, listSeat, user);
         }
 

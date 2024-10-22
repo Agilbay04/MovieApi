@@ -46,6 +46,7 @@ namespace MovieApi.Controllers
             }
             catch(Exception ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new Exception(ex.Message);
             }
         }
@@ -57,9 +58,17 @@ namespace MovieApi.Controllers
         [ProducesResponseType(type: typeof(List<MovieResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<List<MovieResponse>>> FindAllMoviesAsync()
         {
-            var movies = await _movieService.FindAllAsync();
-            var movieDtos = await _movieMapper.ToDtos(movies.ToList());
-            return Ok(movieDtos);
+            try
+            {
+                var movies = await _movieService.FindAllAsync();
+                var movieDtos = await _movieMapper.ToDtos(movies.ToList());
+                return Ok(movieDtos);
+            }
+            catch(Exception ex)
+            {
+                SentrySdk.CaptureException(ex);
+                throw new Exception(ex.Message);
+            }
         }
 
         [HttpPost]
@@ -77,6 +86,7 @@ namespace MovieApi.Controllers
             }
             catch(Exception ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new Exception(ex.Message);
             }
         }
@@ -96,6 +106,7 @@ namespace MovieApi.Controllers
             }
             catch (Exception ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new Exception(ex.Message);
             }
         }
@@ -115,6 +126,7 @@ namespace MovieApi.Controllers
             }
             catch(Exception ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new Exception(ex.Message);
             }
         }

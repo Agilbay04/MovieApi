@@ -37,6 +37,7 @@ namespace MovieApi.Controllers.v1
             }
             catch(Exception ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new Exception(ex.Message);
             }
         }
@@ -56,6 +57,7 @@ namespace MovieApi.Controllers.v1
             }
             catch (Exception ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new Exception(ex.Message);
             }
         }
@@ -75,10 +77,12 @@ namespace MovieApi.Controllers.v1
             }
             catch(BadHttpRequestException ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new BadHttpRequestException(ex.Message);
             }
             catch(Exception ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new Exception(ex.Message);
             }
         }
@@ -98,6 +102,7 @@ namespace MovieApi.Controllers.v1
             }
             catch (Exception ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new Exception(ex.Message);
             }
         }
@@ -117,6 +122,7 @@ namespace MovieApi.Controllers.v1
             }
             catch(Exception ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new Exception(ex.Message);
             }
         }

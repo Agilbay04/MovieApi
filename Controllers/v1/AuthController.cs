@@ -5,7 +5,6 @@ using MovieApi.Requests.Auth;
 using MovieApi.Responses;
 using MovieApi.Responses.Auth;
 using MovieApi.Services.AuthService;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace MovieApi.Controllers.v1
 {
@@ -38,10 +37,12 @@ namespace MovieApi.Controllers.v1
             }
             catch(UnauthorizedAccessException ex)
             {
+                SentrySdk.CaptureException(ex);
                 return Unauthorized(ex.Message);
             }
             catch(Exception ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new Exception(ex.Message);
             }
 
@@ -62,6 +63,7 @@ namespace MovieApi.Controllers.v1
             }
             catch(Exception ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new Exception(ex.Message);
             }
         }
@@ -81,6 +83,7 @@ namespace MovieApi.Controllers.v1
             }
             catch(Exception ex)
             {
+                SentrySdk.CaptureException(ex);
                 throw new Exception(ex.Message);
             }
         }

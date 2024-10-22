@@ -1,4 +1,8 @@
+using System.Reflection;
 using System.Text;
+using log4net;
+using log4net.Config;
+using log4net.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,6 +16,20 @@ using Quartz;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container;
+
+// Configure sentry
+builder.WebHost.UseSentry(options =>
+{
+    options.Dsn = builder.Configuration["Sentry:Dsn"];
+    options.Debug = true;
+    options.TracesSampleRate = 1.0;
+    options.Environment = builder.Environment.EnvironmentName;
+    options.AttachStacktrace = true;
+});
+
+// Configure Log4net
+var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
 // Configure environment
 builder.Configuration
