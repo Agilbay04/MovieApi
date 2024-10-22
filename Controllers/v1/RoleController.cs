@@ -10,7 +10,7 @@ namespace MovieApi.Controllers.v1
 {
     [ApiController]
     [Authorize(Roles = "admin")]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService _roleService;

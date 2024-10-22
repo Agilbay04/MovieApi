@@ -9,7 +9,7 @@ using MovieApi.Services.PriceService;
 namespace MovieApi.Controllers.v1
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class PriceController : ControllerBase
     {
         private readonly PriceMapper _priceMapper;

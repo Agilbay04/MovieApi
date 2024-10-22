@@ -9,7 +9,7 @@ using MovieApi.Services.ShowtimeService;
 namespace MovieApi.Controllers.v1
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class ShowtimeController : ControllerBase
     {
         private readonly ShowtimeMapper _showtimeMapper;

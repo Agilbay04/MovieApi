@@ -9,7 +9,7 @@ using MovieApi.Services.BookingService;
 namespace MovieApi.Controllers.v1
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class BookingController : ControllerBase
     {
         private readonly IBookingService _bookingService;

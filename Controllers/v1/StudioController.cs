@@ -9,7 +9,7 @@ using MovieApi.Services.StudioService;
 namespace MovieApi.Controllers.v1
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class StudioController : ControllerBase
     {
         private readonly IStudioService _studioService;
