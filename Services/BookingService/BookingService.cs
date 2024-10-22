@@ -132,10 +132,9 @@ namespace MovieApi.Services.BookingService
 
         public async Task<(Booking, List<string>, User)> BookingFromAdminAsync(CreateBookingRequest req)
         {
-            var transcation = _context.Database.BeginTransaction();
+            var transcation = _context.Database.BeginTransaction(System.Data.IsolationLevel.Serializable);
             _log.Info($"Admin {_userService.GetUsername()} create booking");
             var orderFrom = AppConstant.ORDER_FROM_ADMIN;
-            var bookingCode = await _codeUtil.GenerateCode(orderFrom);
 
             if (req.ShowtimeId == null)
             {
@@ -162,7 +161,7 @@ namespace MovieApi.Services.BookingService
             var booking = new Booking
             {
                 ShowtimeId = req.ShowtimeId,
-                BookingCode = bookingCode,
+                BookingCode = await _codeUtil.GenerateCode(orderFrom),
                 CustomerName = await _codeUtil.GenerateCustomerName(),
                 OrderFrom = orderFrom,
                 BookingDate = DateTime.Now,
@@ -220,10 +219,9 @@ namespace MovieApi.Services.BookingService
 
         public async Task<(Booking, List<string>, User)> BookingFromCustomerAsync(CreateBookingRequest req)
         {
-            var transcation = _context.Database.BeginTransaction();
+            var transcation = _context.Database.BeginTransaction(System.Data.IsolationLevel.Serializable);
             _log.Info($"Customer {_userService.GetUsername()} booking tiket movie from customer");
             var orderFrom = AppConstant.ORDER_FROM_CUSTOMER;
-            var bookingCode = await _codeUtil.GenerateCode(orderFrom);
             bool isPaid = false;
             int bookingStatus = (int)AppConstant.StatusBooking.NEW;
             string paymentProof = null;
@@ -251,7 +249,7 @@ namespace MovieApi.Services.BookingService
             var booking = new Booking
             {
                 ShowtimeId = req.ShowtimeId,
-                BookingCode = bookingCode,
+                BookingCode = await _codeUtil.GenerateCode(orderFrom),
                 CustomerId = _userService.GetUserId(),
                 CustomerName = _userService.GetUsername(),
                 OrderFrom = orderFrom,
