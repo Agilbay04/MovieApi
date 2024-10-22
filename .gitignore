@@ -30,7 +30,9 @@ appsettings.Development.json
 *.temp
 
 # Logs
+Logs/
 *.log
 
 # Visual Studio Code files
 .vscode/
+

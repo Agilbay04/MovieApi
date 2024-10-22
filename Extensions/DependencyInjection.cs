@@ -1,6 +1,3 @@
-using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
-using MovieApi.Database;
 using MovieApi.Extensions.Infrastrucure;
 using MovieApi.Jobs;
 using MovieApi.Mappers;

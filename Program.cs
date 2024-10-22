@@ -15,11 +15,12 @@ using Quartz;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
+
+// Configure log4net
 var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
 var fileInfo = new FileInfo("log4net.config");
 XmlConfigurator.Configure(fileInfo);
 
-// Menambahkan log4net ke provider logging default di .NET Core
 builder.Logging.ClearProviders();
 builder.Logging.AddLog4Net();
 
