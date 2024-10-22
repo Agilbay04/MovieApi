@@ -52,6 +52,7 @@ namespace MovieApi.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddSingleton<ISchedulerService, SchedulerService>();
             services.AddScoped<CancelBookingJob>();
+            services.AddScoped<DeleteShowtimeJob>();
 
             // Cofigure Quartz
             services.AddQuartz(options => {

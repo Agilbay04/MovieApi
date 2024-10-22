@@ -1,3 +1,4 @@
+using log4net;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Utilities;
@@ -7,6 +8,8 @@ namespace MovieApi.Jobs
 {
     public class CancelBookingJob : IJob
     {
+        private static readonly ILog _log = LogManager.GetLogger(typeof(CancelBookingJob));
+        
         private readonly AppDbContext _context;
 
         public CancelBookingJob(AppDbContext context)
@@ -16,6 +19,7 @@ namespace MovieApi.Jobs
 
         public async Task Execute(IJobExecutionContext context)
         {
+            _log.Info("Start cancel booking job");
             var bookingToCancel = await _context
                 .Bookings
                 .Where(b => b.Status == (int)AppConstant.StatusBooking.NEW &&
@@ -30,6 +34,8 @@ namespace MovieApi.Jobs
                 booking.Status = (int)AppConstant.StatusBooking.CANCEL;
                 booking.CancelReason = "Canceled by system because payment expired";   
                 _context.Bookings.Update(booking);
+                
+                _log.Info($"Cancel booking: {booking.BookingCode} because payment expired");
             }
 
             var bookingIds = bookingToCancel.Select(b => b.Id).ToList();
@@ -43,6 +49,7 @@ namespace MovieApi.Jobs
                 _context.BookingSeats.Update(bookingSeat);
             }
 
+            _log.Info("Finish cancel booking job");
             await _context.SaveChangesAsync();
         }
     }

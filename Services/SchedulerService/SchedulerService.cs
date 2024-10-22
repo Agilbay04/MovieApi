@@ -16,11 +16,12 @@ namespace MovieApi.Services.SchedulerService
         {
             var scheduler = await _schedulerFactory.GetScheduler();
 
-            var job = JobBuilder.Create<CancelBookingJob>()
+            //JOB 1: CANCEL BOOKING JOB
+            var cancelBookingJob = JobBuilder.Create<CancelBookingJob>()
                 .WithIdentity("CancelBookingJob", "group1")
                 .Build();
 
-            var trigger = TriggerBuilder.Create()
+            var cancelBookingTrigger = TriggerBuilder.Create()
                 .WithIdentity("CancelBookingTrigger", "group1")
                 .StartNow()
                 .WithSimpleSchedule(x => x
@@ -28,7 +29,22 @@ namespace MovieApi.Services.SchedulerService
                     .RepeatForever())
                 .Build();
 
-            await scheduler.ScheduleJob(job, trigger);
+            await scheduler.ScheduleJob(cancelBookingJob, cancelBookingTrigger);
+
+            //JOB 2: DELETE SHOWTIME JOB
+            var deleteShowtimeJob = JobBuilder.Create<DeleteShowtimeJob>()
+                .WithIdentity("DeleteShowtimeJob", "group2")
+                .Build();
+
+            var deleteShowtimeTrigger = TriggerBuilder.Create()
+                .WithIdentity("DeleteShowtimeTrigger", "group2")
+                .StartNow()
+                .WithSimpleSchedule(x => x
+                    .WithIntervalInMinutes(1)
+                    .RepeatForever())
+                .Build();
+
+            await scheduler.ScheduleJob(deleteShowtimeJob, deleteShowtimeTrigger);
 
             await scheduler.Start();
         }

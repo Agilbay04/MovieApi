@@ -1,3 +1,4 @@
+using log4net;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
@@ -11,6 +12,8 @@ namespace MovieApi.Services.MovieService
 {
     public class MovieService : IMovieService
     {
+        private static readonly ILog _log = LogManager.GetLogger(typeof(MovieService));
+
         private readonly AppDbContext _context;
 
         private readonly DateUtil _dateUtil;
@@ -82,6 +85,7 @@ namespace MovieApi.Services.MovieService
                 }
             }
             
+            _log.Info($"Admin {_userService.GetUsername()} add new movie data: {movie.Title}");
             await _context.SaveChangesAsync();
             return movie;
         }
@@ -152,6 +156,8 @@ namespace MovieApi.Services.MovieService
             }
             _context.Movies.Update(isMovieExists);
             await _context.SaveChangesAsync();
+
+            _log.Info($"Admin {_userService.GetUsername()} update movie data: {isMovieExists.Title}");
             return isMovieExists;
         }
 
@@ -184,6 +190,7 @@ namespace MovieApi.Services.MovieService
             _context.Movies.Update(movie);
             await _context.SaveChangesAsync();
 
+            _log.Info($"Admin {_userService.GetUsername()} delete movie data: {movie.Title}");
             return movie;
         }
     }

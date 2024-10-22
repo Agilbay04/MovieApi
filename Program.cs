@@ -14,7 +14,13 @@ using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container;
+// Add services to the container
+var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+
+// Menambahkan log4net ke provider logging default di .NET Core
+builder.Logging.ClearProviders();
+builder.Logging.AddLog4Net();
 
 // Configure sentry
 builder.WebHost.UseSentry(options =>
@@ -25,10 +31,6 @@ builder.WebHost.UseSentry(options =>
     options.Environment = builder.Environment.EnvironmentName;
     options.AttachStacktrace = true;
 });
-
-// Configure Log4net
-var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
-XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
 // Configure environment
 builder.Configuration
@@ -66,7 +68,7 @@ builder.Services.AddAuthentication(options => {
 
 builder.Services.AddAuthorization();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Configure Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
 

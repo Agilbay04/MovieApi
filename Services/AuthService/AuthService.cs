@@ -1,3 +1,4 @@
+using log4net;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
@@ -9,11 +10,14 @@ namespace MovieApi.Services.AuthService
 {
     public class AuthService : IAuthService
     {
+        private static readonly ILog _log = LogManager.GetLogger(typeof(AuthService));
+        
         private readonly AppDbContext _context;
 
         private readonly JwtUtil _jwtUtil;
 
         private readonly IUploadService _uploadService;
+
 
         public AuthService(AppDbContext context, JwtUtil jwtUtil, IUploadService uploadService)
         {
@@ -27,8 +31,13 @@ namespace MovieApi.Services.AuthService
             string token = "";
             var user = await _context.Users
                 .FirstOrDefaultAsync(x => x.Username == req.Username && 
-                    x.Deleted == false) ?? 
+                    x.Deleted == false);
+
+            if (user == null)
+            {
+                _log.Error($"User not found: {req.Username}");
                 throw new BadHttpRequestException("User not found");
+            } 
 
             if (PasswordUtil.VerifyPassword(req.Password, user.Password, user.Salt))
             {
@@ -36,9 +45,11 @@ namespace MovieApi.Services.AuthService
             }
             else
             {
+                _log.Error($"Invalid username or password: {req.Username}");
                 throw new UnauthorizedAccessException("Invalid username or password");
             }
 
+            _log.Info($"User role {user.Role.Code} login to the system: {user.Username}");
             return (user, token);
         }
 
@@ -57,6 +68,7 @@ namespace MovieApi.Services.AuthService
 
             if (user != null)
             {
+                _log.Error($"Username already taken by another user: {req.Username}");
                 throw new BadHttpRequestException("Username already taken by another user");
             }
 
@@ -84,6 +96,7 @@ namespace MovieApi.Services.AuthService
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
 
+            _log.Info($"Register new user: {newUser.Username}");
             return newUser;
         }
 
@@ -102,6 +115,7 @@ namespace MovieApi.Services.AuthService
 
             if (user != null)
             {
+                _log.Error($"Username already taken by another user: {req.Username}");
                 throw new BadHttpRequestException("Username already taken by another user");
             }
 
@@ -129,6 +143,7 @@ namespace MovieApi.Services.AuthService
             await _context.Users.AddAsync(newUser);
             await _context.SaveChangesAsync();
 
+            _log.Info($"Register new admin: {newUser.Username}");
             return newUser;
         }
 

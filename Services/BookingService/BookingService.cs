@@ -132,7 +132,8 @@ namespace MovieApi.Services.BookingService
 
         public async Task<(Booking, List<string>, User)> BookingFromAdminAsync(CreateBookingRequest req)
         {
-            _log.Info("Booking from admin: " + req.ToString());
+            var transcation = _context.Database.BeginTransaction();
+            _log.Info($"Admin {_userService.GetUsername()} create booking");
             var orderFrom = AppConstant.ORDER_FROM_ADMIN;
             var bookingCode = await _codeUtil.GenerateCode(orderFrom);
 
@@ -195,6 +196,7 @@ namespace MovieApi.Services.BookingService
             }
 
             await _context.SaveChangesAsync();
+            transcation.Commit();
 
             var bookingResult = await _context
                 .Bookings
@@ -212,12 +214,14 @@ namespace MovieApi.Services.BookingService
                 .FirstOrDefaultAsync(x => x.Id == _userService.GetUserId()) ?? 
                 throw new DllNotFoundException("User not found");
 
-            _log.Info("Booking from admin success: " + bookingResult.BookingCode);
+            _log.Info($"Admin {_userService.GetUsername()} successfully create booking, booking code: {bookingResult.BookingCode}");
             return (bookingResult, listSeat, user);
         }
 
         public async Task<(Booking, List<string>, User)> BookingFromCustomerAsync(CreateBookingRequest req)
         {
+            var transcation = _context.Database.BeginTransaction();
+            _log.Info($"Customer {_userService.GetUsername()} booking tiket movie from customer");
             var orderFrom = AppConstant.ORDER_FROM_CUSTOMER;
             var bookingCode = await _codeUtil.GenerateCode(orderFrom);
             bool isPaid = false;
@@ -280,6 +284,7 @@ namespace MovieApi.Services.BookingService
             }
 
             await _context.SaveChangesAsync();
+            transcation.Commit();
 
             var bookingResult = await _context
                 .Bookings
@@ -296,7 +301,8 @@ namespace MovieApi.Services.BookingService
                 .Users
                 .FirstOrDefaultAsync(x => x.Id == _userService.GetUserId()) ??
                 throw new Exception("User not found");
-
+                
+            _log.Info($"Customer {_userService.GetUsername()} success create booking, booking code: {bookingResult.BookingCode}");
             return (bookingResult, listSeat, user);
         }
 
