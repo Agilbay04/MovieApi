@@ -16,7 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
-XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+var fileInfo = new FileInfo("log4net.config");
+XmlConfigurator.Configure(fileInfo);
 
 // Menambahkan log4net ke provider logging default di .NET Core
 builder.Logging.ClearProviders();
