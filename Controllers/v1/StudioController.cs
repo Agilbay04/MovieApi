@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MovieApi.Mappers;
 using MovieApi.Requests.Studio;
+using MovieApi.Responses;
 using MovieApi.Responses.Studio;
 using MovieApi.Services.StudioService;
 
@@ -24,19 +25,20 @@ namespace MovieApi.Controllers.v1
         [EndpointSummary("Find studio by id")]
         [EndpointDescription("Find studio by id from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(StudioResponse), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<StudioResponse>> FindStudioByIdAsync(string id)
+        [ProducesResponseType(type: typeof(BaseResponseApi<StudioResponse>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<StudioResponse>>> FindStudioByIdAsync(string id)
         {
             try
             {
                 var (studio, seats) = await _studioService.FindByIdAsync(id);
                 var studioDto = await _studioMapper.ToDtoWithSeats(studio, seats.ToList());
+                var res = new BaseResponseApi<StudioResponse>(studioDto, "Get studio success");
                 return Ok(studioDto);
             }
             catch (Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -44,19 +46,20 @@ namespace MovieApi.Controllers.v1
         [EndpointSummary("Find all studios")]
         [EndpointDescription("Find all studios from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(List<StudioResponse>), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<StudioResponse>>> FindAllStudiosAsync()
+        [ProducesResponseType(type: typeof(BaseResponseApi<List<StudioResponse>>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<List<StudioResponse>>>> FindAllStudiosAsync()
         {
             try
             {
                 var studios = await _studioService.FindAllAsync();
                 var studioDtos = await _studioMapper.ToDtos(studios.ToList());
-                return Ok(studioDtos);
+                var res = new BaseResponseApi<List<StudioResponse>>(studioDtos, "Get all studios success");
+                return Ok(res);
             }
             catch (Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -64,19 +67,20 @@ namespace MovieApi.Controllers.v1
         [EndpointSummary("Create studio")]
         [EndpointDescription("Create studio from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(StudioResponse), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<StudioResponse>> CreateStudioAsync(CreateStudioRequest req)
+        [ProducesResponseType(type: typeof(BaseResponseApi<StudioResponse>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<StudioResponse>>> CreateStudioAsync(CreateStudioRequest req)
         {
             try
             {
                 var (studio, seats) = await _studioService.CreateAsync(req);
                 var studioDto = await _studioMapper.ToDtoWithSeats(studio, seats.ToList());
-                return Ok(studioDto);
+                var res = new BaseResponseApi<StudioResponse>(studioDto, "Create studio success");
+                return Ok(res);
             }
             catch (Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -84,19 +88,20 @@ namespace MovieApi.Controllers.v1
         [EndpointSummary("Update studio")]
         [EndpointDescription("Update studio from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(StudioResponse), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<StudioResponse>> UpdateStudioAsync(UpdateStudioRequest req, string id)
+        [ProducesResponseType(type: typeof(BaseResponseApi<StudioResponse>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<StudioResponse>>> UpdateStudioAsync(UpdateStudioRequest req, string id)
         {
             try
             {
                 var (studio, seats) = await _studioService.UpdateAsync(req, id);
                 var studioDto = await _studioMapper.ToDtoWithSeats(studio, seats.ToList());
+                var res = new BaseResponseApi<StudioResponse>(studioDto, "Update studio success");
                 return Ok(studioDto);
             }
             catch (Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -104,19 +109,20 @@ namespace MovieApi.Controllers.v1
         [EndpointSummary("Delete studio")]
         [EndpointDescription("Delete studio from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(StudioResponse), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<StudioResponse>> DeleteStudioAsync(string id)
+        [ProducesResponseType(type: typeof(BaseResponseApi<StudioResponse>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<StudioResponse>>> DeleteStudioAsync(string id)
         {
             try
             {
                 var studio = await _studioService.DeleteAsync(id);
                 var studioDto = await _studioMapper.ToDto(studio);
+                var res = new BaseResponseApi<StudioResponse>(studioDto, "Delete studio success");
                 return Ok(studioDto);
             }
             catch (Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
     }

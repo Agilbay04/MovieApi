@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MovieApi.Mappers;
 using MovieApi.Requests.Genre;
+using MovieApi.Responses;
 using MovieApi.Responses.Genre;
 using MovieApi.Services.GenreService;
 
@@ -26,19 +27,20 @@ namespace MovieApi.Controllers.v1
         [EndpointSummary("Get genre by id")]
         [EndpointDescription("Get genre by id from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(GenreResponse), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<GenreResponse>> FindGenreByIdAsync(string id)
+        [ProducesResponseType(type: typeof(BaseResponseApi<GenreResponse>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<GenreResponse>>> FindGenreByIdAsync(string id)
         {
             try
             {
                 var genre = await _genreService.FindByIdAsync(id);
                 var genreDto = await _genreMapper.ToDto(genre);
-                return Ok(genreDto);
+                var res = new BaseResponseApi<GenreResponse>(genreDto, "Get genre successful");
+                return Ok(res);
             }
             catch(Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -46,19 +48,20 @@ namespace MovieApi.Controllers.v1
         [EndpointSummary("Get all genres")]
         [EndpointDescription("Get all genres from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(List<GenreResponse>), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<GenreResponse>>> FindAllGenresAsync()
+        [ProducesResponseType(type: typeof(BaseResponseApi<List<GenreResponse>>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<BaseResponseApi<GenreResponse>>>> FindAllGenresAsync()
         {   
             try
             {
                 var genres = await _genreService.FindAllAsync();
                 var genreDtos = await _genreMapper.ToDtos(genres.ToList());
-                return Ok(genreDtos);
+                var res = new BaseResponseApi<List<GenreResponse>>(genreDtos, "Get all genre successful");
+                return Ok(res);
             }
             catch (Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -66,14 +69,15 @@ namespace MovieApi.Controllers.v1
         [EndpointSummary("Create genre")]
         [EndpointDescription("Create genre from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(GenreResponse), statusCode: StatusCodes.Status201Created)]
-        public async Task<ActionResult<GenreResponse>> CreateGenreAsync(CreateGenreRequest req)
+        [ProducesResponseType(type: typeof(BaseResponseApi<GenreResponse>), statusCode: StatusCodes.Status201Created)]
+        public async Task<ActionResult<BaseResponseApi<GenreResponse>>> CreateGenreAsync(CreateGenreRequest req)
         {
             try
             {
                 var genre = await _genreService.CreateAsync(req);
                 var genreDto = await _genreMapper.ToDto(genre);
-                return Ok(genreDto);
+                var res = new BaseResponseApi<GenreResponse>(genreDto, "Create genre successful");
+                return Ok(res);
             }
             catch(BadHttpRequestException ex)
             {
@@ -83,7 +87,7 @@ namespace MovieApi.Controllers.v1
             catch(Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -91,19 +95,25 @@ namespace MovieApi.Controllers.v1
         [EndpointSummary("Update genre")]
         [EndpointDescription("Update genre from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(GenreResponse), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<GenreResponse>> UpdateGenreAsync(UpdateGenreRequest req, string id)
+        [ProducesResponseType(type: typeof(BaseResponseApi<GenreResponse>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<GenreResponse>>> UpdateGenreAsync(UpdateGenreRequest req, string id)
         {
             try 
             {
                 var genre = await _genreService.UpdateAsync(req, id);
                 var genreDto = await _genreMapper.ToDto(genre);
-                return Ok(genreDto);
+                var res = new BaseResponseApi<GenreResponse>(genreDto, "Update genre successful");
+                return Ok(res);
+            }
+            catch(BadHttpRequestException ex)
+            {
+                SentrySdk.CaptureException(ex);
+                throw new BadHttpRequestException(ex.Message);
             }
             catch (Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -111,19 +121,20 @@ namespace MovieApi.Controllers.v1
         [EndpointSummary("Delete genre")]
         [EndpointDescription("Delete genre from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<GenreResponse>> DeleteGenreAsync(string id)
+        [ProducesResponseType(type: typeof(BaseResponseApi<GenreResponse>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<GenreResponse>>> DeleteGenreAsync(string id)
         {
             try
             {
                 var genre = await _genreService.DeleteAsync(id);
                 var genreDto = await _genreMapper.ToDto(genre);
-                return Ok(genreDto);
+                var res = new BaseResponseApi<GenreResponse>(genreDto, "Delete genre successful");
+                return Ok(res);
             }
             catch(Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 

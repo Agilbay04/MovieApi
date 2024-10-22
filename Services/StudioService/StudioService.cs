@@ -24,14 +24,14 @@ namespace MovieApi.Services.StudioService
                 .Studios
                 .OrderBy(s => s.Code)
                 .FirstOrDefaultAsync(x => x.Id == id && x.Deleted == false) ?? 
-                throw new Exception("Studio not found");
+                throw new DllNotFoundException("Studio not found");
             
             var seats = await _context
                 .Seats
                 .Where(s => s.StudioId == id && s.Deleted == false)
                 .OrderBy(s => s.Row)
                 .ThenBy(s => s.Column)
-                .ToListAsync() ?? throw new Exception("Seats not found");
+                .ToListAsync() ?? throw new DllNotFoundException("Seats not found");
 
             return (studio, seats);
         }
@@ -97,7 +97,7 @@ namespace MovieApi.Services.StudioService
         public async Task<Studio> DeleteAsync(string id)
         {
             if (id == null)
-                throw new Exception("Id is required");
+                throw new BadHttpRequestException("Id is required");
             
             var (studio, seats) = await FindByIdAsync(id);
 

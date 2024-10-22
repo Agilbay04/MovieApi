@@ -1,5 +1,5 @@
+using log4net.Core;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Validations.Rules;
 using MovieApi.Mappers;
 using MovieApi.Requests.Auth;
 using MovieApi.Responses;
@@ -26,24 +26,20 @@ namespace MovieApi.Controllers.v1
         [EndpointSummary("Login user")]
         [EndpointDescription("Login user role admin and customer")]
         [Produces("application/json")]
-        [ProducesResponseType(type: typeof(LoginResponse), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<LoginResponse>> Login(UserLoginRequest req)
+        [ProducesResponseType(type: typeof(BaseResponseApi<LoginResponse>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<LoginResponse>>> Login(UserLoginRequest req)
         {
             try
             {
                 var (user, token) = await _authService.Login(req);
                 var loginDto = await _authMapper.ToDtoLogin(user, token);
-                return Ok(loginDto);
-            }
-            catch(UnauthorizedAccessException ex)
-            {
-                SentrySdk.CaptureException(ex);
-                return Unauthorized(ex.Message);
+                var res = new BaseResponseApi<LoginResponse>(loginDto, "Login successful");
+                return Ok(res);
             }
             catch(Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
 
         }
@@ -53,18 +49,19 @@ namespace MovieApi.Controllers.v1
         [EndpointDescription("Register user role customer")]
         [Produces("application/json")]
         [ProducesResponseType(type: typeof(RegisterResponse), statusCode: StatusCodes.Status201Created)]
-        public async Task<ActionResult<Result<RegisterResponse>>> Register([FromForm] UserRegisterRequest req)
+        public async Task<ActionResult<BaseResponseApi<RegisterResponse>>> Register([FromForm] UserRegisterRequest req)
         {
             try
             {
                 var user = await _authService.Register(req);
                 var registerDto = await _authMapper.ToDtoRegister(user);
-                return Ok(registerDto);
+                var res = new BaseResponseApi<RegisterResponse>(registerDto, "Login successful");
+                return Ok(res);
             }
             catch(Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -72,19 +69,21 @@ namespace MovieApi.Controllers.v1
         [EndpointSummary("Register admin")]
         [EndpointDescription("Register user role admin")]
         [Produces("application/json")]
-        [ProducesResponseType(type: typeof(RegisterResponse), statusCode: StatusCodes.Status201Created)]
-        public async Task<ActionResult<RegisterResponse>> RegisterAdmin([FromForm] UserRegisterRequest req)
+        [ProducesResponseType(type: typeof(BaseResponseApi<RegisterResponse>), statusCode: StatusCodes.Status201Created)]
+        public async Task<ActionResult<BaseResponseApi<RegisterResponse>>> RegisterAdmin([FromForm] UserRegisterRequest req)
         {
             try
             {
                 var user = await _authService.RegisterAdmin(req);
                 var registerDto = await _authMapper.ToDtoRegister(user);
-                return Ok(registerDto);
+                var res = new BaseResponseApi<RegisterResponse>(registerDto, "Register successful");
+                return Ok(res);
             }
             catch(Exception ex)
             {
+                var errorRes = new ErrorResponseApi("Request was not successful", [ex.Message]);
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 

@@ -27,7 +27,8 @@ namespace MovieApi.Services.AuthService
             string token = "";
             var user = await _context.Users
                 .FirstOrDefaultAsync(x => x.Username == req.Username && 
-                    x.Deleted == false) ?? throw new UnauthorizedAccessException("User not registered");
+                    x.Deleted == false) ?? 
+                throw new BadHttpRequestException("User not found");
 
             if (PasswordUtil.VerifyPassword(req.Password, user.Password, user.Salt))
             {
@@ -56,7 +57,7 @@ namespace MovieApi.Services.AuthService
 
             if (user != null)
             {
-                throw new Exception("Username already taken by another user");
+                throw new BadHttpRequestException("Username already taken by another user");
             }
 
             var hashedPassword = PasswordUtil.HashPassword(req.Password);
@@ -101,7 +102,7 @@ namespace MovieApi.Services.AuthService
 
             if (user != null)
             {
-                throw new Exception("Username already taken by another user");
+                throw new BadHttpRequestException("Username already taken by another user");
             }
 
             var hashedPassword = PasswordUtil.HashPassword(req.Password);

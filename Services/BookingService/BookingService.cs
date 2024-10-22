@@ -43,14 +43,14 @@ namespace MovieApi.Services.BookingService
                     .Bookings
                     .Where(x => x.CustomerId == _userService.GetUserId())
                     .FirstOrDefaultAsync(x => x.Id == id) ??
-                    throw new Exception("Booking not found");
+                    throw new DllNotFoundException("Booking not found");
             }
             else
             {
                 booking = await _context
                     .Bookings
                     .FirstOrDefaultAsync(x => x.Id == id) ??
-                    throw new Exception("Booking not found");
+                    throw new DllNotFoundException("Booking not found");
             }
 
             var listSeatId = await _context
@@ -68,7 +68,7 @@ namespace MovieApi.Services.BookingService
             var user = await _context
                 .Users
                 .FirstOrDefaultAsync(x => x.Id == booking.CreatedBy) ?? 
-                throw new Exception("User not found");
+                throw new DllNotFoundException("User not found");
             
             return (booking, seats, user);
         }
@@ -83,14 +83,14 @@ namespace MovieApi.Services.BookingService
                     .Bookings
                     .Where(x => x.CustomerId == _userService.GetUserId())
                     .FirstOrDefaultAsync(x => x.BookingCode == code) ??
-                    throw new Exception("Booking not found");
+                    throw new DllNotFoundException("Booking not found");
             }
             else
             {
                 booking = await _context
                     .Bookings
                     .FirstOrDefaultAsync(x => x.BookingCode == code) ??
-                    throw new Exception("Booking not found");
+                    throw new DllNotFoundException("Booking not found");
             }
             
             var listSeatId = await _context
@@ -108,7 +108,7 @@ namespace MovieApi.Services.BookingService
             var user = await _context
                 .Users
                 .FirstOrDefaultAsync(x => x.Id == booking.CreatedBy) ?? 
-                throw new Exception("User not found");
+                throw new DllNotFoundException("User not found");
             
             return (booking, seats, user);
         }
@@ -139,13 +139,13 @@ namespace MovieApi.Services.BookingService
             if (req.ShowtimeId == null)
             {
                 _log.Error("Showtime is required");
-                throw new Exception("Showtime is required");
+                throw new BadHttpRequestException("Showtime is required");
             }
             
             if (req.Seats == null)
             {
                 _log.Error("Seats is required");
-                throw new Exception("Seats is required");
+                throw new BadHttpRequestException("Seats is required");
             }
 
             var showTime = await _context
@@ -155,7 +155,7 @@ namespace MovieApi.Services.BookingService
             if (showTime == null)
             {
                 _log.Error("Showtime not found");
-                throw new Exception("Showtime not found");
+                throw new DllNotFoundException("Showtime not found");
             }
 
             var booking = new Booking
@@ -182,7 +182,7 @@ namespace MovieApi.Services.BookingService
                 if (!await IsSeatAvailable(seat, showTime.Id))
                 {
                     _log.Error("Seat not available");
-                    throw new Exception("Seat not available");
+                    throw new BadHttpRequestException("Seat not available");
                 }
 
                 var bookingSeat = new BookingSeat
@@ -199,18 +199,18 @@ namespace MovieApi.Services.BookingService
             var bookingResult = await _context
                 .Bookings
                 .Where(x => x.Id == booking.Id)
-                .FirstOrDefaultAsync() ?? throw new Exception("Booking not found");
+                .FirstOrDefaultAsync() ?? throw new DllNotFoundException("Booking not found");
 
             var listSeat = await _context
                 .Seats
                 .Where(x => req.Seats.Contains(x.Id))
                 .Select(x => x.SeatNumber)
-                .ToListAsync() ?? throw new Exception("Seats not found");
+                .ToListAsync() ?? throw new DllNotFoundException("Seats not found");
 
             var user = await _context
                 .Users
                 .FirstOrDefaultAsync(x => x.Id == _userService.GetUserId()) ?? 
-                throw new Exception("User not found");
+                throw new DllNotFoundException("User not found");
 
             _log.Info("Booking from admin success: " + bookingResult.BookingCode);
             return (bookingResult, listSeat, user);
@@ -225,13 +225,13 @@ namespace MovieApi.Services.BookingService
             string paymentProof = null;
 
             if (req.ShowtimeId == null)
-                throw new Exception("Showtime is required");
+                throw new BadHttpRequestException("Showtime is required");
             
             if (req.Seats == null)
-                throw new Exception("Seats is required");
+                throw new BadHttpRequestException("Seats is required");
             
             if (req.PaymentType != AppConstant.PAYMENT_TYPE_TRANSFER)
-                throw new Exception($"Payment type {req.PaymentType} is not available");
+                throw new BadHttpRequestException($"Payment type {req.PaymentType} is not available");
 
             if (req.PaymentProof != null)
             {
@@ -242,7 +242,7 @@ namespace MovieApi.Services.BookingService
             var showTime = await _context
                 .Showtimes
                 .FirstOrDefaultAsync(x => x.Id == req.ShowtimeId && x.Deleted == false) ??
-                throw new Exception("Showtime not found");
+                throw new DllNotFoundException("Showtime not found");
 
             var booking = new Booking
             {
@@ -268,7 +268,7 @@ namespace MovieApi.Services.BookingService
             foreach (var seat in req.Seats)
             {
                 if (!await IsSeatAvailable(seat, showTime.Id))
-                    throw new Exception("Seat not available");
+                    throw new DllNotFoundException("Seat not available");
 
                 var bookingSeat = new BookingSeat
                 {
@@ -284,13 +284,13 @@ namespace MovieApi.Services.BookingService
             var bookingResult = await _context
                 .Bookings
                 .Where(x => x.Id == booking.Id)
-                .FirstOrDefaultAsync() ?? throw new Exception("Booking not found");
+                .FirstOrDefaultAsync() ?? throw new DllNotFoundException("Booking not found");
 
             var listSeat = await _context
                 .Seats
                 .Where(x => req.Seats.Contains(x.Id))
                 .Select(x => x.SeatNumber)
-                .ToListAsync() ?? throw new Exception("Seats not found");
+                .ToListAsync() ?? throw new DllNotFoundException("Seats not found");
 
             var user = await _context
                 .Users
@@ -305,7 +305,7 @@ namespace MovieApi.Services.BookingService
             var booking = await _context
                 .Bookings
                 .FirstOrDefaultAsync(x => x.BookingCode == bookingCode) ??
-                throw new Exception("Booking not found");
+                throw new DllNotFoundException("Booking not found");
             
             if (!req.IsConfirmed)
             {
@@ -326,13 +326,13 @@ namespace MovieApi.Services.BookingService
             var bookingSeats = await _context
                 .BookingSeats
                 .Where(x => x.BookingId == booking.Id && x.Deleted == false)
-                .ToListAsync() ?? throw new Exception("Booking seats not found");
+                .ToListAsync() ?? throw new DllNotFoundException("Booking seats not found");
             
             var listSeat = await _context
                 .Seats
                 .Where(x => bookingSeats.Select(x => x.SeatId).Contains(x.Id))
                 .Select(x => x.SeatNumber)
-                .ToListAsync() ?? throw new Exception("Seats not found");
+                .ToListAsync() ?? throw new DllNotFoundException("Seats not found");
 
             if (!req.IsConfirmed)
             {
@@ -347,7 +347,7 @@ namespace MovieApi.Services.BookingService
             var user = await _context
                 .Users
                 .FirstOrDefaultAsync(x => x.Id == booking.CreatedBy) ??
-                throw new Exception("User not found");
+                throw new DllNotFoundException("User not found");
             
             return (booking, listSeat, user);
         }
@@ -355,12 +355,12 @@ namespace MovieApi.Services.BookingService
         public async Task<(Booking, List<string>, User)> UploadPaymentProofAsync(IFormFile? paymentProof, string bookingCode)
         {
             if (paymentProof == null)
-                throw new Exception("Payment proof is required");
+                throw new BadHttpRequestException("Payment proof is required");
             
             var booking = await _context
                 .Bookings
                 .FirstOrDefaultAsync(x => x.BookingCode == bookingCode) ??
-                throw new Exception("Booking not found");
+                throw new BadHttpRequestException("Booking not found");
             
             booking.PaymentProof = await _uploadService.UploadFileAsync(paymentProof, "Payments");
             booking.Status = (int)AppConstant.StatusBooking.ON_CONFIRMATION;
@@ -372,18 +372,18 @@ namespace MovieApi.Services.BookingService
                 .BookingSeats
                 .Where(x => x.BookingId == booking.Id && x.Deleted == false)
                 .Select(x => x.SeatId)
-                .ToListAsync() ?? throw new Exception("Seats not found");
+                .ToListAsync() ?? throw new DllNotFoundException("Seats not found");
 
             var listSeat = await _context
                 .Seats
                 .Where(x => listSeatId.Contains(x.Id))
                 .Select(x => x.SeatNumber)
-                .ToListAsync() ?? throw new Exception("Seats not found");
+                .ToListAsync() ?? throw new DllNotFoundException("Seats not found");
 
             var user = await _context
                 .Users
                 .FirstOrDefaultAsync(x => x.Id == booking.CreatedBy) ??
-                throw new Exception("User not found");
+                throw new DllNotFoundException("User not found");
             
             return (booking, listSeat, user);
         }

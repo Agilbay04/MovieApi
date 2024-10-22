@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Mappers;
 using MovieApi.Requests;
 using MovieApi.Requests.Movie;
+using MovieApi.Responses;
 using MovieApi.Responses.Movie;
 using MovieApi.Services.MovieService;
 
@@ -15,18 +15,14 @@ namespace MovieApi.Controllers
     [Route("api/v1/[controller]")]
     public class MovieController : ControllerBase
     {
-        private readonly AppDbContext _context;
-
         private readonly IMovieService _movieService;
 
         private readonly MovieMapper _movieMapper;
 
         public MovieController(
-            AppDbContext context, 
             IMovieService movieService, 
             MovieMapper movieMapper)
         {
-            _context = context;
             _movieService = movieService;
             _movieMapper = movieMapper;
         }
@@ -35,19 +31,20 @@ namespace MovieApi.Controllers
         [EndpointSummary("Find movie by id")]
         [EndpointDescription("Find movie by id from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(MovieResponse), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<Movie>> FindMovieByIdAsync(string id)
+        [ProducesResponseType(type: typeof(BaseResponseApi<MovieResponse>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<Movie>>> FindMovieByIdAsync(string id)
         {
             try
             {
                 var movie = await _movieService.FindByIdAsync(id);
                 var movieDto = await _movieMapper.ToDto(movie);
-                return Ok(movieDto);
+                var res = new BaseResponseApi<MovieResponse>(movieDto, "Get movie successful");
+                return Ok(res);
             }
             catch(Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -55,19 +52,20 @@ namespace MovieApi.Controllers
         [EndpointSummary("Find all movies")]
         [EndpointDescription("Find all movies from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(List<MovieResponse>), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<MovieResponse>>> FindAllMoviesAsync()
+        [ProducesResponseType(type: typeof(BaseResponseApi<List<MovieResponse>>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<List<MovieResponse>>>> FindAllMoviesAsync()
         {
             try
             {
                 var movies = await _movieService.FindAllAsync();
                 var movieDtos = await _movieMapper.ToDtos(movies.ToList());
-                return Ok(movieDtos);
+                var res = new BaseResponseApi<IEnumerable<MovieResponse>>(movieDtos, "Get all movie successful");
+                return Ok(res);
             }
             catch(Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -75,19 +73,20 @@ namespace MovieApi.Controllers
         [EndpointSummary("Create movie")]
         [EndpointDescription("Create movie from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(MovieResponse), statusCode: StatusCodes.Status201Created)]
-        public async Task<ActionResult<MovieResponse>> CreateMovieAsync([FromForm] CreateMovieRequest req)
+        [ProducesResponseType(type: typeof(BaseResponseApi<MovieResponse>), statusCode: StatusCodes.Status201Created)]
+        public async Task<ActionResult<BaseResponseApi<MovieResponse>>> CreateMovieAsync([FromForm] CreateMovieRequest req)
         {
             try
             {
                 var movie = await _movieService.CreateAsync(req);
                 var movieDto = await _movieMapper.ToDto(movie);
-                return Ok(movieDto);
+                var res = new BaseResponseApi<MovieResponse>(movieDto, "Create movie successful");
+                return Ok(res);
             }
             catch(Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -95,19 +94,20 @@ namespace MovieApi.Controllers
         [EndpointSummary("Update movie")]
         [EndpointDescription("Update movie from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(type: typeof(MovieResponse), statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<Movie>> UpdateMovieAsync([FromForm] UpdateMovieRequest req, string id)
+        [ProducesResponseType(type: typeof(BaseResponseApi<MovieResponse>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<Movie>>> UpdateMovieAsync([FromForm] UpdateMovieRequest req, string id)
         {
             try 
             {
                 var movie = await _movieService.UpdateAsync(req, id);
                 var movieDto = await _movieMapper.ToDto(movie);
-                return Ok(movieDto);
+                var res = new BaseResponseApi<MovieResponse>(movieDto, "Update movie successful");
+                return Ok(res);
             }
             catch (Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 
@@ -115,19 +115,20 @@ namespace MovieApi.Controllers
         [EndpointSummary("Delete movie")]
         [EndpointDescription("Delete movie from admin")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
-        public async Task<ActionResult<MovieResponse>> DeleteMovieAsync(string id)
+        [ProducesResponseType(type: typeof(BaseResponseApi<MovieResponse>), statusCode: StatusCodes.Status200OK)]
+        public async Task<ActionResult<BaseResponseApi<MovieResponse>>> DeleteMovieAsync(string id)
         {
             try
             {
                 var movie = await _movieService.DeleteAsync(id);
                 var movieDto = await _movieMapper.ToDto(movie);
-                return Ok(movieDto);
+                var res = new BaseResponseApi<MovieResponse>(movieDto, "Delete movie successful");
+                return Ok(res);
             }
             catch(Exception ex)
             {
                 SentrySdk.CaptureException(ex);
-                throw new Exception(ex.Message);
+                throw ex;
             }
         }
 

@@ -22,7 +22,7 @@ namespace MovieApi.Services.GenreService
         {
             var genre = await _context.Genres.FirstOrDefaultAsync(g => g.Id == id && 
                 g.Deleted == false) ?? 
-                throw new Exception("Genre not found");
+                throw new DllNotFoundException("Genre not found");
             
             return genre;
         }
@@ -74,7 +74,7 @@ namespace MovieApi.Services.GenreService
                 .FirstOrDefaultAsync();
             
             if (genreInUsed != null)
-                throw new Exception("Genre in used");
+                throw new BadHttpRequestException("Genre in used");
 
             var genre = await FindByIdAsync(id);
 

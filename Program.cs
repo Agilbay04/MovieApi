@@ -2,7 +2,6 @@ using System.Reflection;
 using System.Text;
 using log4net;
 using log4net.Config;
-using log4net.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -157,6 +156,8 @@ app.UseCors("CorsPolicy");
 
 // Cofingure map controllers
 app.MapControllers();
+
+app.UseExceptionHandler();
 
 // Call scheduler job
 var schedulerService = app.Services.GetRequiredService<ISchedulerService>();

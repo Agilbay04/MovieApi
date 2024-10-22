@@ -21,11 +21,11 @@ namespace MovieApi.Services.PriceService
         public async Task<Price> FindByIdAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
-                throw new Exception("Id is required");
+                throw new BadHttpRequestException("Id is required");
 
             var price = await _context.Prices
                 .FirstOrDefaultAsync(x => x.Id == id && x.Deleted == false) ?? 
-                throw new Exception("Price not found");
+                throw new BadHttpRequestException("Price not found");
             
             return price;
         }
@@ -58,7 +58,7 @@ namespace MovieApi.Services.PriceService
         public async Task<Price> UpdateAsync(UpdatePriceRequest req, string id)
         {
             if (string.IsNullOrEmpty(id))
-                throw new Exception("Id is required");
+                throw new BadHttpRequestException("Id is required");
 
             var price = await FindByIdAsync(id);
             price.Code = req.Code;
@@ -74,7 +74,7 @@ namespace MovieApi.Services.PriceService
         public async Task<Price> DeleteAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
-                throw new Exception("Id is required");
+                throw new BadHttpRequestException("Id is required");
 
             var price = await FindByIdAsync(id);
             price.Deleted = true;

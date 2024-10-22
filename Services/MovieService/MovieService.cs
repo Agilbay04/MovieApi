@@ -35,7 +35,7 @@ namespace MovieApi.Services.MovieService
         {
             var movie = await _context.Movies.FirstOrDefaultAsync(m => m.Id == id && 
                 m.Deleted == false) ?? 
-                throw new Exception("Movie not found");
+                throw new DllNotFoundException("Movie not found");
             return movie;
         }
 
@@ -89,7 +89,7 @@ namespace MovieApi.Services.MovieService
         public async Task<Movie> UpdateAsync(UpdateMovieRequest req, string id)
         {
             if (id == null)
-                throw new Exception("Id is required");
+                throw new BadHttpRequestException("Id is required");
 
             var releaseDate = _dateUtil.GetStringToDate(req.ReleaseDate);
             
@@ -104,7 +104,7 @@ namespace MovieApi.Services.MovieService
                     var deleteOldImage = await _uploadService.DeleteFileAsync(isMovieExists.ImageUrl);
 
                     if (!deleteOldImage)
-                        throw new Exception("Failed to delete old image");
+                        throw new BadHttpRequestException("Failed to delete old image");
                 }
             }
 
@@ -158,7 +158,7 @@ namespace MovieApi.Services.MovieService
         public async Task<Movie> DeleteAsync(string id)
         {
             if (id == null)
-                throw new Exception("Id is required");
+                throw new BadHttpRequestException("Id is required");
 
             var movie = await FindByIdAsync(id);
             

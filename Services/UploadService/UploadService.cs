@@ -18,7 +18,7 @@ namespace MovieApi.Services.UploadService
             var extension = Path.GetExtension(file.FileName);
 
             if (!allowedExtensions.Contains(extension))
-                throw new Exception("Image format not allowed");
+                throw new BadHttpRequestException("Image format not allowed");
 
             var uploadsFolder = Path.Combine(_env.ContentRootPath, "Uploads", folderName);
             if(!Directory.Exists(uploadsFolder))

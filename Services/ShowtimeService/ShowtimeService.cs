@@ -26,12 +26,12 @@ namespace MovieApi.Services.ShowtimeService
         public async Task<(Showtime, List<SeatResponse>)> FindByIdAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
-                throw new Exception("Id is required");
+                throw new BadHttpRequestException("Id is required");
 
             var showtime = await _context
                 .Showtimes
                 .FirstOrDefaultAsync(x => x.Id == id && x.Deleted == false) ?? 
-                throw new Exception("Showtime not found");
+                throw new BadHttpRequestException("Showtime not found");
 
             var listSeatUnavailable = await _context
                 .Bookings
@@ -87,7 +87,7 @@ namespace MovieApi.Services.ShowtimeService
             var playDate = _dateUtil.GetStringToDate(req.PlayDate);
 
             if (playDate <= DateTime.Now)
-                throw new Exception("Play date cannot be in the past");
+                throw new BadHttpRequestException("Play date cannot be in the past");
 
             var timeAndDateIsUsed = await _context
                 .Showtimes
@@ -96,7 +96,7 @@ namespace MovieApi.Services.ShowtimeService
                 .FirstOrDefaultAsync();
 
             if (timeAndDateIsUsed != null)
-                throw new Exception("The schedule is already used by movie " + timeAndDateIsUsed.Movie?.Title);
+                throw new BadHttpRequestException("The schedule is already used by movie " + timeAndDateIsUsed.Movie?.Title);
             
             var priceId = await SetPriceId(playDate, req.MovieId);
 
@@ -123,10 +123,10 @@ namespace MovieApi.Services.ShowtimeService
             var playDate = _dateUtil.GetStringToDate(req.PlayDate);
 
             if (playDate <= DateTime.Now)
-                throw new Exception("Play date cannot be in the past");
+                throw new BadHttpRequestException("Play date cannot be in the past");
             
             if (startTime <= DateTime.Now.TimeOfDay)
-                throw new Exception("Start time cannot be in the past");
+                throw new BadHttpRequestException("Start time cannot be in the past");
             
             var timeAndDateIsUsed = await _context
                 .Showtimes
@@ -136,7 +136,7 @@ namespace MovieApi.Services.ShowtimeService
                 .FirstOrDefaultAsync();
 
             if (timeAndDateIsUsed != null)
-                throw new Exception("The schedule is already used by movie " + timeAndDateIsUsed.Movie?.Title);
+                throw new BadHttpRequestException("The schedule is already used by movie " + timeAndDateIsUsed.Movie?.Title);
             
             var priceId = await SetPriceId(playDate, req.MovieId);
 
@@ -155,7 +155,7 @@ namespace MovieApi.Services.ShowtimeService
         public async Task<Showtime> DeleteAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
-                throw new Exception("Id is required");
+                throw new BadHttpRequestException("Id is required");
 
             var (showtime, _) = await FindByIdAsync(id);
             showtime.Deleted = true;
@@ -170,30 +170,30 @@ namespace MovieApi.Services.ShowtimeService
             var movie = await _context
                 .Movies
                 .Where(m => m.Id == movieId && m.Deleted == false)
-                .FirstOrDefaultAsync() ?? throw new Exception("Movie not found");
+                .FirstOrDefaultAsync() ?? throw new DllNotFoundException("Movie not found");
 
             var price = await _context
                 .Prices
                 .Where(p => p.Deleted == false)
-                .ToArrayAsync() ?? throw new Exception("Price not found");
+                .ToArrayAsync() ?? throw new DllNotFoundException("Price not found");
 
             if (dateTime.DayOfWeek == DayOfWeek.Sunday || dateTime.DayOfWeek == DayOfWeek.Saturday)
             {
                 return price.Where(p => p.Code == AppConstant.PRICE_WEEKEND)
                             .FirstOrDefault()?.Id ?? 
-                            throw new Exception("Price not found");
+                            throw new DllNotFoundException("Price not found");
             }
             else if (dateTime.DayOfWeek == movie.ReleaseDate.DayOfWeek)
             {
                 return price.Where(p => p.Code == AppConstant.PRICE_PRIMETIME)
                             .FirstOrDefault()?.Id ?? 
-                            throw new Exception("Price not found");
+                            throw new DllNotFoundException("Price not found");
             }
             else
             {
                 return price.Where(p => p.Code == AppConstant.PRICE_WEEKDAY)
                             .FirstOrDefault()?.Id ?? 
-                            throw new Exception("Price not found");
+                            throw new DllNotFoundException("Price not found");
             }
         }
     }
