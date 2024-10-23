@@ -47,67 +47,109 @@ namespace MovieApi.Services.StudioService
 
         public async Task<(Studio, IEnumerable<Seat>)> CreateAsync(CreateStudioRequest req)
         {
-            var studio = new Studio
-            {
-                Code = await CreateCodeStudio(),
-                Name = req.Name,
-                Facility = req.Facility,
-                TotalSeats = req.TotalSeats,
-                CreatedBy = _userService.GetUserId(),
-            };
-            await _context.Studios.AddAsync(studio);
-            await _context.SaveChangesAsync();
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
-            var seats = CreateSeats(studio.Id, studio.TotalSeats, req.RowPerSeats)
-                .OrderBy(s => s.Row)
-                .ThenBy(s => s.Column)
-                .ToList();
-            await _context.Seats.AddRangeAsync(seats);
-            await _context.SaveChangesAsync();
-            return (studio, seats);
+            try
+            {
+                var studio = new Studio
+                {
+                    Code = await CreateCodeStudio(),
+                    Name = req.Name,
+                    Facility = req.Facility,
+                    TotalSeats = req.TotalSeats,
+                    CreatedBy = _userService.GetUserId(),
+                };
+                await _context.Studios.AddAsync(studio);
+                await _context.SaveChangesAsync();
+
+                var seats = CreateSeats(studio.Id, studio.TotalSeats, req.RowPerSeats)
+                    .OrderBy(s => s.Row)
+                    .ThenBy(s => s.Column)
+                    .ToList();
+                await _context.Seats.AddRangeAsync(seats);
+                await _context.SaveChangesAsync();
+                
+                await transaction.CommitAsync();
+
+                return (studio, seats);
+            }
+            catch(Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<(Studio, IEnumerable<Seat>)> UpdateAsync(UpdateStudioRequest req, string id)
         {
-            var (studio, seats) = await FindByIdAsync(id);
+            using var transaction = await _context.Database.BeginTransactionAsync();
             
-            studio.Name = req.Name;
-            studio.Facility = req.Facility;
-            studio.TotalSeats = req.TotalSeats;
-            studio.UpdatedBy = _userService.GetUserId();
-            _context.Studios.Update(studio);
-            
-            if (req.TotalSeats != studio.TotalSeats || req.RowPerSeats != 0)
+            try
             {
-                var seatsToDelete = _context
-                    .Seats.Where(s => s.StudioId == id && s.Deleted == false)
-                    .ToList();
-                _context.Seats.RemoveRange(seatsToDelete);
+                if (id == null)
+                throw new BadRequestException("Id is required");
 
-                var newSeats = CreateSeats(studio.Id, req.TotalSeats, req.RowPerSeats)
-                    .OrderBy(s => s.Row)
-                    .ThenBy(s => s.Column)
-                    .ToList();
-                await _context.Seats.AddRangeAsync(newSeats);
+                var (studio, seats) = await FindByIdAsync(id);
+                
+                studio.Name = req.Name;
+                studio.Facility = req.Facility;
+                studio.TotalSeats = req.TotalSeats;
+                studio.UpdatedBy = _userService.GetUserId();
+                _context.Studios.Update(studio);
+                
+                if (req.TotalSeats != studio.TotalSeats || req.RowPerSeats != 0)
+                {
+                    var seatsToDelete = _context
+                        .Seats.Where(s => s.StudioId == id && s.Deleted == false)
+                        .ToList();
+                    _context.Seats.RemoveRange(seatsToDelete);
+
+                    var newSeats = CreateSeats(studio.Id, req.TotalSeats, req.RowPerSeats)
+                        .OrderBy(s => s.Row)
+                        .ThenBy(s => s.Column)
+                        .ToList();
+                    await _context.Seats.AddRangeAsync(newSeats);
+                }
+
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                return (studio, seats);
             }
-
-            await _context.SaveChangesAsync();
-            return (studio, seats);
+            catch(Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception(ex.Message);
+            }
+            
         }
 
         public async Task<Studio> DeleteAsync(string id)
         {
-            if (id == null)
-                throw new BadRequestException("Id is required");
-            
-            var (studio, seats) = await FindByIdAsync(id);
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
-            studio.Deleted = true;
-            studio.UpdatedBy = _userService.GetUserId();
-            _context.Studios.Update(studio);
-            _context.Seats.RemoveRange(seats);
-            await _context.SaveChangesAsync();
-            return studio;
+            try
+            {
+                if (id == null)
+                    throw new BadRequestException("Id is required");
+                
+                var (studio, seats) = await FindByIdAsync(id);
+
+                studio.Deleted = true;
+                studio.UpdatedBy = _userService.GetUserId();
+                _context.Studios.Update(studio);
+                _context.Seats.RemoveRange(seats);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+                return studio;
+            }
+            catch(Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new Exception(ex.Message);
+            }
         }
 
         private async Task<string> CreateCodeStudio()
