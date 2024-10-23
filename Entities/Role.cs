@@ -2,12 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MovieApi.Entities
 {
-    public class Role
+    public class Role : BaseEntity
     {
-        [Key]
-        [MaxLength(100)]
-        public string Id { get; set; }
-
         [Required]
         [MaxLength(30)]
         public string Code { get; set; }
@@ -15,17 +11,5 @@ namespace MovieApi.Entities
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
-
-        public bool Deleted { get; set; }
-
-        public DateTime? CreatedAt { get; set; } = DateTime.Now;
-
-        [MaxLength(100)]        
-        public string? CreatedBy { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
-
-        [MaxLength(100)]
-        public string? UpdatedBy { get; set; }
     }
 }

@@ -3,12 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MovieApi.Entities
 {
-    public class Booking
+    public class Booking : BaseEntity
     {
-        [Key]
-        [MaxLength(100)]
-        public string Id { get; set; }
-
         [Required]
         [MaxLength(100)]
         public string BookingCode { get; set; }
@@ -60,15 +56,5 @@ namespace MovieApi.Entities
         [Required]
         [MaxLength(20)]
         public string OrderFrom { get; set; }
-
-        public DateTime? CreatedAt { get; set; }
-
-        [MaxLength(100)]
-        public string? CreatedBy { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
-
-        [MaxLength(100)]
-        public string? UpdatedBy { get; set; }
     }
 }

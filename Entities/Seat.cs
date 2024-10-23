@@ -3,12 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MovieApi.Entities
 {
-    public class Seat
+    public class Seat : BaseEntity
     {
-        [Key]
-        [MaxLength(100)]
-        public string Id { get; set; }
-
         [Required]
         [MaxLength(100)]
         [ForeignKey("Studio")]
@@ -24,17 +20,5 @@ namespace MovieApi.Entities
 
         [MaxLength(1)]
         public int Column { get; set; }
-
-        public bool Deleted { get; set; } = false;
-
-        public DateTime? CreatedAt { get; set; }
-        
-        [MaxLength(100)]
-        public string? CreatedBy { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
-
-        [MaxLength(100)]
-        public string? UpdatedBy { get; set; }
     }
 }

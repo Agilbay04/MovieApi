@@ -1,14 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.Contracts;
 
 namespace MovieApi.Entities
 {
-    public class Movie
+    public class Movie : BaseEntity
     { 
-        [Key]
-        [MaxLength(100)]
-        public string Id { get; set; }
-        
         [Required]
         [MaxLength(100)]
         public string Title { get; set; }
@@ -28,17 +23,5 @@ namespace MovieApi.Entities
 
         [Required]
         public bool IsPublished { get; set; } = false;
-
-        public bool Deleted { get; set; }
-
-        public DateTime? CreatedAt { get; set; }
-
-        [MaxLength(100)]
-        public string? CreatedBy { get; set; } 
-
-        public DateTime? UpdatedAt { get; set; }
-
-        [MaxLength(100)]
-        public string? UpdatedBy { get; set; }
     }
 }
