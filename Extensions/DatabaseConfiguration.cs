@@ -8,7 +8,7 @@ namespace MovieApi.Extensions
     {
         public static void ConfigureDatabase(this WebApplicationBuilder builder)
         {
-            builder.Services.AddDbContext<AppDbContext>(options => {
+            builder.Services.AddDbContextPool<AppDbContext>(options => {
                 options.UseLazyLoadingProxies()
                     .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
