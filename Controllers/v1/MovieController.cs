@@ -36,8 +36,8 @@ namespace MovieApi.Controllers
         {
             try
             {
-                var movie = await _movieService.FindByIdAsync(id);
-                var movieDto = await _movieMapper.ToDto(movie);
+                var (movie, genres) = await _movieService.FindByIdAsync(id);
+                var movieDto = await _movieMapper.ToDto(movie, genres);
                 var res = new BaseResponseApi<MovieResponse>(movieDto, "Get movie successful");
                 return Ok(res);
             }
@@ -58,8 +58,7 @@ namespace MovieApi.Controllers
             try
             {
                 var movies = await _movieService.FindAllAsync();
-                var movieDtos = await _movieMapper.ToDtos(movies.ToList());
-                var res = new BaseResponseApi<IEnumerable<MovieResponse>>(movieDtos, "Get all movie successful");
+                var res = new BaseResponseApi<List<MovieResponse>>(movies, "Get all movie successful");
                 return Ok(res);
             }
             catch(Exception ex)
@@ -78,8 +77,8 @@ namespace MovieApi.Controllers
         {
             try
             {
-                var movie = await _movieService.CreateAsync(req);
-                var movieDto = await _movieMapper.ToDto(movie);
+                var (movie, seats) = await _movieService.CreateAsync(req);
+                var movieDto = await _movieMapper.ToDto(movie, seats);
                 var res = new BaseResponseApi<MovieResponse>(movieDto, "Create movie successful");
                 return Ok(res);
             }
@@ -99,8 +98,8 @@ namespace MovieApi.Controllers
         {
             try 
             {
-                var movie = await _movieService.UpdateAsync(req, id);
-                var movieDto = await _movieMapper.ToDto(movie);
+                var (movie, seats) = await _movieService.UpdateAsync(req, id);
+                var movieDto = await _movieMapper.ToDto(movie, seats);
                 var res = new BaseResponseApi<MovieResponse>(movieDto, "Update movie successful");
                 return Ok(res);
             }
@@ -120,8 +119,8 @@ namespace MovieApi.Controllers
         {
             try
             {
-                var movie = await _movieService.DeleteAsync(id);
-                var movieDto = await _movieMapper.ToDto(movie);
+                var (movie, seats) = await _movieService.DeleteAsync(id);
+                var movieDto = await _movieMapper.ToDto(movie, seats);
                 var res = new BaseResponseApi<MovieResponse>(movieDto, "Delete movie successful");
                 return Ok(res);
             }

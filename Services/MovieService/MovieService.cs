@@ -4,6 +4,8 @@ using MovieApi.Database;
 using MovieApi.Entities;
 using MovieApi.Requests;
 using MovieApi.Requests.Movie;
+using MovieApi.Responses.Genre;
+using MovieApi.Responses.Movie;
 using MovieApi.Services.UploadService;
 using MovieApi.Services.UserService;
 using MovieApi.Utilities;
@@ -34,23 +36,53 @@ namespace MovieApi.Services.MovieService
             _userService = userService;
         }
 
-        public async Task<Movie> FindByIdAsync(string id)
+        public async Task<(Movie, List<Genre>)> FindByIdAsync(string id)
         {
             var movie = await _context.Movies.FirstOrDefaultAsync(m => m.Id == id && 
                 m.Deleted == false) ?? 
                 throw new DllNotFoundException("Movie not found");
+
+            var listGenres = await _context.MovieGenres
+                .Join(_context.Genres, 
+                    mg => mg.GenreId, 
+                    g => g.Id,
+                    (mg, g) => new { mg, g})
+                .Where(mg => mg.mg.MovieId == id && 
+                    mg.mg.Deleted == false)
+                .Select(mg => mg.g)
+                .ToListAsync();
+
+            return (movie, listGenres);
+        }
+
+        public async Task<List<MovieResponse>> FindAllAsync()
+        {
+            var movie = await _context.Movies
+                .GroupJoin(_context.MovieGenres,
+                    m => m.Id,
+                    mg => mg.MovieId,
+                    (m, mg) => new { m, mg })
+                .Where(m => m.m.Deleted == false)
+                .Select(m => new MovieResponse
+                {
+                    Id = m.m.Id,
+                    Title = m.m.Title,
+                    ImageUrl = m.m.ImageUrl,
+                    Duration = m.m.Duration,
+                    Description = m.m.Description,
+                    IsPublished = m.m.IsPublished ? 
+                        "Published" : "Unpublished",
+                    ReleaseDate = _dateUtil.GetDateToString(m.m.ReleaseDate),
+                    CreatedAt = _dateUtil.GetDateTimeToString(m.m.CreatedAt),
+                    UpdatedAt = _dateUtil.GetDateTimeToString(m.m.UpdatedAt),
+                    ListOfGenres = m.mg.Select(mg => mg.Genre.Name).ToList()
+                })
+                .ToListAsync();
+
             return movie;
         }
 
-        public async Task<IEnumerable<Movie>> FindAllAsync()
-        {
-            return await _context.Movies
-                .Where(m => m.Deleted == false)
-                .OrderByDescending(m => m.CreatedAt)
-                .ToListAsync();
-        }
-
-        public async Task<Movie> CreateAsync(CreateMovieRequest req)
+        public async Task<(Movie, List<Genre>)> CreateAsync(CreateMovieRequest req)
         {
             var releaseDate = _dateUtil.GetStringToDate(req.ReleaseDate);
             string imageUrl = "";
@@ -87,17 +119,28 @@ namespace MovieApi.Services.MovieService
             
             _log.Info($"Admin {_userService.GetUsername()} add new movie data: {movie.Title}");
             await _context.SaveChangesAsync();
-            return movie;
+
+            var listGenres = await _context.MovieGenres
+                .Join(_context.Genres, 
+                    mg => mg.GenreId, 
+                    g => g.Id,
+                    (mg, g) => new { mg, g})
+                .Where(mg => mg.mg.MovieId == movie.Id && 
+                    mg.mg.Deleted == false)
+                .Select(mg => mg.g)
+                .ToListAsync();
+
+            return (movie, listGenres);
         }
 
-        public async Task<Movie> UpdateAsync(UpdateMovieRequest req, string id)
+        public async Task<(Movie, List<Genre>)> UpdateAsync(UpdateMovieRequest req, string id)
         {
             if (id == null)
                 throw new BadHttpRequestException("Id is required");
 
             var releaseDate = _dateUtil.GetStringToDate(req.ReleaseDate);
             
-            var isMovieExists = await FindByIdAsync(id);
+            var (isMovieExists, _) = await FindByIdAsync(id);
 
             if (req.Poster != null)
             {
@@ -157,16 +200,26 @@ namespace MovieApi.Services.MovieService
             _context.Movies.Update(isMovieExists);
             await _context.SaveChangesAsync();
 
+            var listGenres = await _context.MovieGenres
+                .Join(_context.Genres, 
+                    mg => mg.GenreId, 
+                    g => g.Id,
+                    (mg, g) => new { mg, g})
+                .Where(mg => mg.mg.MovieId == isMovieExists.Id && 
+                    mg.mg.Deleted == false)
+                .Select(mg => mg.g)
+                .ToListAsync();
+
             _log.Info($"Admin {_userService.GetUsername()} update movie data: {isMovieExists.Title}");
-            return isMovieExists;
+            return (isMovieExists, listGenres);
         }
 
-        public async Task<Movie> DeleteAsync(string id)
+        public async Task<(Movie, List<Genre>)> DeleteAsync(string id)
         {
             if (id == null)
                 throw new BadHttpRequestException("Id is required");
 
-            var movie = await FindByIdAsync(id);
+            var (movie, _) = await FindByIdAsync(id);
             
             movie.Deleted = true;
             movie.UpdatedAt = DateTime.Now;
@@ -190,8 +243,18 @@ namespace MovieApi.Services.MovieService
             _context.Movies.Update(movie);
             await _context.SaveChangesAsync();
 
+            var listGenres = await _context.MovieGenres
+                .Join(_context.Genres, 
+                    mg => mg.GenreId, 
+                    g => g.Id,
+                    (mg, g) => new { mg, g})
+                .Where(mg => mg.mg.MovieId == movie.Id && 
+                    mg.mg.Deleted == false)
+                .Select(mg => mg.g)
+                .ToListAsync();
+
             _log.Info($"Admin {_userService.GetUsername()} delete movie data: {movie.Title}");
-            return movie;
+            return (movie, listGenres);
         }
     }
 }
