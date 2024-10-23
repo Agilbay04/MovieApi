@@ -34,18 +34,10 @@ namespace MovieApi.Controllers
         [ProducesResponseType(type: typeof(BaseResponseApi<MovieResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<Movie>>> FindMovieByIdAsync(string id)
         {
-            try
-            {
-                var (movie, genres) = await _movieService.FindByIdAsync(id);
-                var movieDto = await _movieMapper.ToDto(movie, genres);
-                var res = new BaseResponseApi<MovieResponse>(movieDto, "Get movie successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (movie, genres) = await _movieService.FindByIdAsync(id);
+            var movieDto = await _movieMapper.ToDto(movie, genres);
+            var res = new BaseResponseApi<MovieResponse>(movieDto, "Get movie successful");
+            return Ok(res);
         }
 
         [HttpGet]
@@ -55,17 +47,9 @@ namespace MovieApi.Controllers
         [ProducesResponseType(type: typeof(BaseResponseApi<List<MovieResponse>>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<List<MovieResponse>>>> FindAllMoviesAsync()
         {
-            try
-            {
-                var movies = await _movieService.FindAllAsync();
-                var res = new BaseResponseApi<List<MovieResponse>>(movies, "Get all movie successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var movies = await _movieService.FindAllAsync();
+            var res = new BaseResponseApi<List<MovieResponse>>(movies, "Get all movie successful");
+            return Ok(res);
         }
 
         [HttpPost]
@@ -75,18 +59,10 @@ namespace MovieApi.Controllers
         [ProducesResponseType(type: typeof(BaseResponseApi<MovieResponse>), statusCode: StatusCodes.Status201Created)]
         public async Task<ActionResult<BaseResponseApi<MovieResponse>>> CreateMovieAsync([FromForm] CreateMovieRequest req)
         {
-            try
-            {
-                var (movie, seats) = await _movieService.CreateAsync(req);
-                var movieDto = await _movieMapper.ToDto(movie, seats);
-                var res = new BaseResponseApi<MovieResponse>(movieDto, "Create movie successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (movie, seats) = await _movieService.CreateAsync(req);
+            var movieDto = await _movieMapper.ToDto(movie, seats);
+            var res = new BaseResponseApi<MovieResponse>(movieDto, "Create movie successful");
+            return Ok(res);
         }
 
         [HttpPut("{id}")]
@@ -96,18 +72,10 @@ namespace MovieApi.Controllers
         [ProducesResponseType(type: typeof(BaseResponseApi<MovieResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<Movie>>> UpdateMovieAsync([FromForm] UpdateMovieRequest req, string id)
         {
-            try 
-            {
-                var (movie, seats) = await _movieService.UpdateAsync(req, id);
-                var movieDto = await _movieMapper.ToDto(movie, seats);
-                var res = new BaseResponseApi<MovieResponse>(movieDto, "Update movie successful");
-                return Ok(res);
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (movie, seats) = await _movieService.UpdateAsync(req, id);
+            var movieDto = await _movieMapper.ToDto(movie, seats);
+            var res = new BaseResponseApi<MovieResponse>(movieDto, "Update movie successful");
+            return Ok(res);
         }
 
         [HttpDelete("{id}")]
@@ -117,18 +85,10 @@ namespace MovieApi.Controllers
         [ProducesResponseType(type: typeof(BaseResponseApi<MovieResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<MovieResponse>>> DeleteMovieAsync(string id)
         {
-            try
-            {
-                var (movie, seats) = await _movieService.DeleteAsync(id);
-                var movieDto = await _movieMapper.ToDto(movie, seats);
-                var res = new BaseResponseApi<MovieResponse>(movieDto, "Delete movie successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (movie, seats) = await _movieService.DeleteAsync(id);
+            var movieDto = await _movieMapper.ToDto(movie, seats);
+            var res = new BaseResponseApi<MovieResponse>(movieDto, "Delete movie successful");
+            return Ok(res);
         }
 
     }

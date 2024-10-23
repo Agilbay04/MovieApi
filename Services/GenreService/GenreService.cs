@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
+using MovieApi.Exceptions;
 using MovieApi.Requests.Genre;
 using MovieApi.Services.UserService;
 
@@ -22,7 +23,7 @@ namespace MovieApi.Services.GenreService
         {
             var genre = await _context.Genres.FirstOrDefaultAsync(g => g.Id == id && 
                 g.Deleted == false) ?? 
-                throw new DllNotFoundException("Genre not found");
+                throw new NotFoundException("Genre not found");
             
             return genre;
         }
@@ -42,7 +43,7 @@ namespace MovieApi.Services.GenreService
                 g.Deleted == false);
 
             if (isNameExists != null)
-                throw new BadHttpRequestException("Genre name already exists");
+                throw new BadRequestException("Genre name already exists");
 
             var genre = new Genre
             {
@@ -74,7 +75,7 @@ namespace MovieApi.Services.GenreService
                 .FirstOrDefaultAsync();
             
             if (genreInUsed != null)
-                throw new BadHttpRequestException("Genre in used");
+                throw new BadRequestException("Genre in used");
 
             var genre = await FindByIdAsync(id);
 

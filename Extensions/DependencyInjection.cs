@@ -1,4 +1,3 @@
-using MovieApi.Extensions.Infrastrucure;
 using MovieApi.Jobs;
 using MovieApi.Mappers;
 using MovieApi.Services.AuthService;
@@ -56,12 +55,6 @@ namespace MovieApi.Extensions
                 options.UseMicrosoftDependencyInjectionJobFactory();
             });
             services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
-            
-            // Configure global exception handler
-            services.AddExceptionHandler<NotFoundExceptionHandler>();
-            services.AddExceptionHandler<BadRequestExceptionHandler>();
-            services.AddExceptionHandler<UnauthorizedExceptionHandler>();
-            services.AddProblemDetails();
         }
     }
 }

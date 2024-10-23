@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
+using MovieApi.Exceptions;
 using MovieApi.Requests.Studio;
 using MovieApi.Services.UserService;
 
@@ -24,14 +25,14 @@ namespace MovieApi.Services.StudioService
                 .Studios
                 .OrderBy(s => s.Code)
                 .FirstOrDefaultAsync(x => x.Id == id && x.Deleted == false) ?? 
-                throw new DllNotFoundException("Studio not found");
+                throw new NotFoundException("Studio not found");
             
             var seats = await _context
                 .Seats
                 .Where(s => s.StudioId == id && s.Deleted == false)
                 .OrderBy(s => s.Row)
                 .ThenBy(s => s.Column)
-                .ToListAsync() ?? throw new DllNotFoundException("Seats not found");
+                .ToListAsync() ?? throw new NotFoundException("Seats not found");
 
             return (studio, seats);
         }
@@ -97,7 +98,7 @@ namespace MovieApi.Services.StudioService
         public async Task<Studio> DeleteAsync(string id)
         {
             if (id == null)
-                throw new BadHttpRequestException("Id is required");
+                throw new BadRequestException("Id is required");
             
             var (studio, seats) = await FindByIdAsync(id);
 

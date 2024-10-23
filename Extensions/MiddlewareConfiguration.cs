@@ -1,3 +1,5 @@
+using MovieApi.Middlewares;
+
 namespace MovieApi.Extensions
 {
     public static class MiddlewareConfiguration
@@ -15,7 +17,7 @@ namespace MovieApi.Extensions
             app.UseAuthorization();
             app.UseCors("CorsPolicy");
             app.MapControllers();
-            app.UseExceptionHandler();
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
         }
     }
 }

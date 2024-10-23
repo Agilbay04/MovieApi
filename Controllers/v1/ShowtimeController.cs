@@ -29,18 +29,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<ShowtimeResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<ShowtimeResponse>>> FindShowtimeByIdAsync(string id)
         {
-            try
-            {
-                var (showtime, seats) = await _showtimeService.FindByIdAsync(id);
-                var showtimeDto = await _showtimeMapper.ToDtoDetail(showtime, seats);
-                var res = new BaseResponseApi<ShowtimeResponse>(showtimeDto, "Find showtime by id successful");
-                return Ok(res);
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (showtime, seats) = await _showtimeService.FindByIdAsync(id);
+            var showtimeDto = await _showtimeMapper.ToDtoDetail(showtime, seats);
+            var res = new BaseResponseApi<ShowtimeResponse>(showtimeDto, "Find showtime by id successful");
+            return Ok(res);
         }
 
         [HttpGet]
@@ -50,18 +42,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<List<ShowtimeResponse>>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<List<ShowtimeResponse>>>> FindAllShowtimesAsync()
         {
-            try
-            {
-                var showtimes = await _showtimeService.FindAllAsync();
-                var showtimesDto = await _showtimeMapper.ToDtos(showtimes.ToList());
-                var res = new BaseResponseApi<List<ShowtimeResponse>>(showtimesDto, "Find all showtimes successful");
-                return Ok(res);
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var showtimes = await _showtimeService.FindAllAsync();
+            var showtimesDto = await _showtimeMapper.ToDtos(showtimes.ToList());
+            var res = new BaseResponseApi<List<ShowtimeResponse>>(showtimesDto, "Find all showtimes successful");
+            return Ok(res);
         }
 
         [HttpPost]
@@ -71,22 +55,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<ShowtimeResponse>), statusCode: StatusCodes.Status201Created)]
         public async Task<ActionResult<BaseResponseApi<ShowtimeResponse>>> CreateShowtimeAsync(CreateShowtimeRequest req)
         {
-            try
-            {
-                var showtime = await _showtimeService.CreateAsync(req);
-                var showtimeDto = await _showtimeMapper.ToDto(showtime);
-                var res = new BaseResponseApi<ShowtimeResponse>(showtimeDto, "Create showtime successful");
-                return Ok(res);
-            }
-            catch (BadHttpRequestException ex)
-            {
-                throw new BadHttpRequestException(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var showtime = await _showtimeService.CreateAsync(req);
+            var showtimeDto = await _showtimeMapper.ToDto(showtime);
+            var res = new BaseResponseApi<ShowtimeResponse>(showtimeDto, "Create showtime successful");
+            return Ok(res);
         }
 
         [HttpPut("{id}")]
@@ -96,18 +68,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<ShowtimeResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<ShowtimeResponse>>> UpdateShowtimeAsync(UpdateShowtimeRequest req, string id)
         {
-            try
-            {
-                var showtime = await _showtimeService.UpdateAsync(req, id);
-                var showtimeDto = await _showtimeMapper.ToDto(showtime);
-                var res = new BaseResponseApi<ShowtimeResponse>(showtimeDto, "Update showtime successful");
-                return Ok(res);
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var showtime = await _showtimeService.UpdateAsync(req, id);
+            var showtimeDto = await _showtimeMapper.ToDto(showtime);
+            var res = new BaseResponseApi<ShowtimeResponse>(showtimeDto, "Update showtime successful");
+            return Ok(res);
         }
 
         [HttpDelete("{id}")]
@@ -117,18 +81,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(typeof(BaseResponseApi<ShowtimeResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<ShowtimeResponse>>> DeleteShowtimeAsync(string id)
         {
-            try
-            {
-                var showtime = await _showtimeService.DeleteAsync(id);
-                var showtimeDto = await _showtimeMapper.ToDto(showtime);
-                var res = new BaseResponseApi<ShowtimeResponse>(showtimeDto, "Delete showtime successfull");
-                return Ok(res);
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var showtime = await _showtimeService.DeleteAsync(id);
+            var showtimeDto = await _showtimeMapper.ToDto(showtime);
+            var res = new BaseResponseApi<ShowtimeResponse>(showtimeDto, "Delete showtime successfull");
+            return Ok(res);
         }
     }
 }

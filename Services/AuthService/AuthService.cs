@@ -2,6 +2,7 @@ using log4net;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
+using MovieApi.Exceptions;
 using MovieApi.Requests.Auth;
 using MovieApi.Services.UploadService;
 using MovieApi.Utilities;
@@ -36,7 +37,7 @@ namespace MovieApi.Services.AuthService
             if (user == null)
             {
                 _log.Error($"User not found: {req.Username}");
-                throw new BadHttpRequestException("User not found");
+                throw new NotFoundException("User not found");
             } 
 
             if (PasswordUtil.VerifyPassword(req.Password, user.Password, user.Salt))
@@ -46,7 +47,7 @@ namespace MovieApi.Services.AuthService
             else
             {
                 _log.Error($"Invalid username or password: {req.Username}");
-                throw new UnauthorizedAccessException("Invalid username or password");
+                throw new BadRequestException("Invalid username or password");
             }
 
             _log.Info($"User role {user.Role.Code} login to the system: {user.Username}");
@@ -69,7 +70,7 @@ namespace MovieApi.Services.AuthService
             if (user != null)
             {
                 _log.Error($"Username already taken by another user: {req.Username}");
-                throw new BadHttpRequestException("Username already taken by another user");
+                throw new BadRequestException("Username already taken by another user");
             }
 
             var hashedPassword = PasswordUtil.HashPassword(req.Password);
@@ -116,7 +117,7 @@ namespace MovieApi.Services.AuthService
             if (user != null)
             {
                 _log.Error($"Username already taken by another user: {req.Username}");
-                throw new BadHttpRequestException("Username already taken by another user");
+                throw new BadRequestException("Username already taken by another user");
             }
 
             var hashedPassword = PasswordUtil.HashPassword(req.Password);

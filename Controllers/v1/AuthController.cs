@@ -1,4 +1,3 @@
-using log4net.Core;
 using Microsoft.AspNetCore.Mvc;
 using MovieApi.Mappers;
 using MovieApi.Requests.Auth;
@@ -29,19 +28,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<LoginResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<LoginResponse>>> Login(UserLoginRequest req)
         {
-            try
-            {
-                var (user, token) = await _authService.Login(req);
-                var loginDto = await _authMapper.ToDtoLogin(user, token);
-                var res = new BaseResponseApi<LoginResponse>(loginDto, "Login successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
-
+            var (user, token) = await _authService.Login(req);
+            var loginDto = await _authMapper.ToDtoLogin(user, token);
+            var res = new BaseResponseApi<LoginResponse>(loginDto, "Login successful");
+            return Ok(res);
         }
 
         [HttpPost("customer/register")]
@@ -60,7 +50,6 @@ namespace MovieApi.Controllers.v1
             }
             catch(Exception ex)
             {
-                SentrySdk.CaptureException(ex);
                 throw ex;
             }
         }
@@ -81,8 +70,6 @@ namespace MovieApi.Controllers.v1
             }
             catch(Exception ex)
             {
-                var errorRes = new ErrorResponseApi("Request was not successful", [ex.Message]);
-                SentrySdk.CaptureException(ex);
                 throw ex;
             }
         }

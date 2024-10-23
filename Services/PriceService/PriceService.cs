@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
+using MovieApi.Exceptions;
 using MovieApi.Requests.Price;
 using MovieApi.Services.UserService;
 
@@ -21,11 +22,11 @@ namespace MovieApi.Services.PriceService
         public async Task<Price> FindByIdAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
-                throw new BadHttpRequestException("Id is required");
+                throw new BadRequestException("Id is required");
 
             var price = await _context.Prices
                 .FirstOrDefaultAsync(x => x.Id == id && x.Deleted == false) ?? 
-                throw new BadHttpRequestException("Price not found");
+                throw new BadRequestException("Price not found");
             
             return price;
         }
@@ -58,7 +59,7 @@ namespace MovieApi.Services.PriceService
         public async Task<Price> UpdateAsync(UpdatePriceRequest req, string id)
         {
             if (string.IsNullOrEmpty(id))
-                throw new BadHttpRequestException("Id is required");
+                throw new BadRequestException("Id is required");
 
             var price = await FindByIdAsync(id);
             price.Code = req.Code;
@@ -74,7 +75,7 @@ namespace MovieApi.Services.PriceService
         public async Task<Price> DeleteAsync(string id)
         {
             if (string.IsNullOrEmpty(id))
-                throw new BadHttpRequestException("Id is required");
+                throw new BadRequestException("Id is required");
 
             var price = await FindByIdAsync(id);
             price.Deleted = true;

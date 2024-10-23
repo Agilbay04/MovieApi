@@ -2,6 +2,7 @@ using log4net;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
+using MovieApi.Exceptions;
 using MovieApi.Requests;
 using MovieApi.Requests.Movie;
 using MovieApi.Responses.Genre;
@@ -40,7 +41,7 @@ namespace MovieApi.Services.MovieService
         {
             var movie = await _context.Movies.FirstOrDefaultAsync(m => m.Id == id && 
                 m.Deleted == false) ?? 
-                throw new DllNotFoundException("Movie not found");
+                throw new NotFoundException("Movie not found");
 
             var listGenres = await _context.MovieGenres
                 .Join(_context.Genres, 
@@ -136,7 +137,7 @@ namespace MovieApi.Services.MovieService
         public async Task<(Movie, List<Genre>)> UpdateAsync(UpdateMovieRequest req, string id)
         {
             if (id == null)
-                throw new BadHttpRequestException("Id is required");
+                throw new BadRequestException("Id is required");
 
             var releaseDate = _dateUtil.GetStringToDate(req.ReleaseDate);
             
@@ -151,7 +152,7 @@ namespace MovieApi.Services.MovieService
                     var deleteOldImage = await _uploadService.DeleteFileAsync(isMovieExists.ImageUrl);
 
                     if (!deleteOldImage)
-                        throw new BadHttpRequestException("Failed to delete old image");
+                        throw new BadRequestException("Failed to delete old image");
                 }
             }
 
@@ -217,7 +218,7 @@ namespace MovieApi.Services.MovieService
         public async Task<(Movie, List<Genre>)> DeleteAsync(string id)
         {
             if (id == null)
-                throw new BadHttpRequestException("Id is required");
+                throw new BadRequestException("Id is required");
 
             var (movie, _) = await FindByIdAsync(id);
             

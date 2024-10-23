@@ -28,18 +28,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<StudioResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<StudioResponse>>> FindStudioByIdAsync(string id)
         {
-            try
-            {
-                var (studio, seats) = await _studioService.FindByIdAsync(id);
-                var studioDto = await _studioMapper.ToDtoWithSeats(studio, seats.ToList());
-                var res = new BaseResponseApi<StudioResponse>(studioDto, "Get studio success");
-                return Ok(studioDto);
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (studio, seats) = await _studioService.FindByIdAsync(id);
+            var studioDto = await _studioMapper.ToDtoWithSeats(studio, seats.ToList());
+            var res = new BaseResponseApi<StudioResponse>(studioDto, "Get studio success");
+            return Ok(res);
         }
 
         [HttpGet]
@@ -49,18 +41,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<List<StudioResponse>>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<List<StudioResponse>>>> FindAllStudiosAsync()
         {
-            try
-            {
-                var studios = await _studioService.FindAllAsync();
-                var studioDtos = await _studioMapper.ToDtos(studios.ToList());
-                var res = new BaseResponseApi<List<StudioResponse>>(studioDtos, "Get all studios success");
-                return Ok(res);
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var studios = await _studioService.FindAllAsync();
+            var studioDtos = await _studioMapper.ToDtos(studios.ToList());
+            var res = new BaseResponseApi<List<StudioResponse>>(studioDtos, "Get all studios success");
+            return Ok(res);
         }
 
         [HttpPost]
@@ -70,18 +54,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<StudioResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<StudioResponse>>> CreateStudioAsync(CreateStudioRequest req)
         {
-            try
-            {
-                var (studio, seats) = await _studioService.CreateAsync(req);
-                var studioDto = await _studioMapper.ToDtoWithSeats(studio, seats.ToList());
-                var res = new BaseResponseApi<StudioResponse>(studioDto, "Create studio success");
-                return Ok(res);
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (studio, seats) = await _studioService.CreateAsync(req);
+            var studioDto = await _studioMapper.ToDtoWithSeats(studio, seats.ToList());
+            var res = new BaseResponseApi<StudioResponse>(studioDto, "Create studio success");
+            return Ok(res);
         }
 
         [HttpPut("{id}")]
@@ -91,18 +67,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<StudioResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<StudioResponse>>> UpdateStudioAsync(UpdateStudioRequest req, string id)
         {
-            try
-            {
-                var (studio, seats) = await _studioService.UpdateAsync(req, id);
-                var studioDto = await _studioMapper.ToDtoWithSeats(studio, seats.ToList());
-                var res = new BaseResponseApi<StudioResponse>(studioDto, "Update studio success");
-                return Ok(studioDto);
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (studio, seats) = await _studioService.UpdateAsync(req, id);
+            var studioDto = await _studioMapper.ToDtoWithSeats(studio, seats.ToList());
+            var res = new BaseResponseApi<StudioResponse>(studioDto, "Update studio success");
+            return Ok(res);
         }
 
         [HttpDelete("{id}")]
@@ -112,18 +80,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<StudioResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<StudioResponse>>> DeleteStudioAsync(string id)
         {
-            try
-            {
-                var studio = await _studioService.DeleteAsync(id);
-                var studioDto = await _studioMapper.ToDto(studio);
-                var res = new BaseResponseApi<StudioResponse>(studioDto, "Delete studio success");
-                return Ok(studioDto);
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var studio = await _studioService.DeleteAsync(id);
+            var studioDto = await _studioMapper.ToDto(studio);
+            var res = new BaseResponseApi<StudioResponse>(studioDto, "Delete studio success");
+            return Ok(res);
         }
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Database;
 using MovieApi.Entities;
+using MovieApi.Exceptions;
 using MovieApi.Requests.Role;
 using MovieApi.Services.UserService;
 
@@ -22,7 +23,7 @@ namespace MovieApi.Services.RoleService
         {
             var role = await _context.Roles
                 .Where(r => r.Id == id && r.Deleted == false)
-                .FirstOrDefaultAsync() ?? throw new DllNotFoundException("Role not found");
+                .FirstOrDefaultAsync() ?? throw new NotFoundException("Role not found");
             return role;
         }
 
@@ -31,7 +32,7 @@ namespace MovieApi.Services.RoleService
             var role = await _context.Roles
                 .Where(r => r.Code == code && r.Deleted == false)
                 .OrderByDescending(r => r.CreatedAt)
-                .FirstOrDefaultAsync() ?? throw new DllNotFoundException("Role not found");
+                .FirstOrDefaultAsync() ?? throw new NotFoundException("Role not found");
             return role;
         }
 
@@ -45,14 +46,14 @@ namespace MovieApi.Services.RoleService
         public async Task<Role> CreateAsync(CreateRoleRequest req)
         {
             if (req.Code == null)
-                throw new BadHttpRequestException("Code is required");
+                throw new BadRequestException("Code is required");
 
             if (req.Name == null)
-                throw new BadHttpRequestException("Name is required");
+                throw new BadRequestException("Name is required");
 
             var isCodeExists = await FindByCodeAsync(req.Code);
             if (isCodeExists != null)
-                throw new BadHttpRequestException("Code already used");
+                throw new BadRequestException("Code already used");
 
             var role = new Role
             {
@@ -68,20 +69,20 @@ namespace MovieApi.Services.RoleService
         public async Task<Role> UpdateAsync(UpdateRoleRequest req, string id)
         {
             if (id == null)
-                throw new BadHttpRequestException("Id is required");
+                throw new BadRequestException("Id is required");
 
             if (req.Code == null)
-                throw new BadHttpRequestException("Code is required");
+                throw new BadRequestException("Code is required");
 
             if (req.Name == null)
-                throw new BadHttpRequestException("Name is required");
+                throw new BadRequestException("Name is required");
 
             var isRoleExists = await FindByIdAsync(id);
 
             if (isRoleExists != null)
             {
                 if (isRoleExists.Code == req.Code)
-                    throw new BadHttpRequestException("Code already used");
+                    throw new BadRequestException("Code already used");
             }
 
             var role = await FindByIdAsync(id);
@@ -100,7 +101,7 @@ namespace MovieApi.Services.RoleService
                 .FirstOrDefaultAsync();
             
             if (roleInUsed != null)
-                throw new BadHttpRequestException("Role in used");
+                throw new BadRequestException("Role in used");
 
             var role = await FindByIdAsync(id);
             role.Deleted = true;

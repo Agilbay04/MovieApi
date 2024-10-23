@@ -29,18 +29,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<PriceResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<PriceResponse>>> FindPriceByIdAsync(string id)
         {
-            try
-            {
-                var price = await _priceService.FindByIdAsync(id);
-                var priceDto = await _priceMapper.ToDto(price);
-                var res = new BaseResponseApi<PriceResponse>(priceDto, "Find price by id successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var price = await _priceService.FindByIdAsync(id);
+            var priceDto = await _priceMapper.ToDto(price);
+            var res = new BaseResponseApi<PriceResponse>(priceDto, "Find price by id successful");
+            return Ok(res);
         }
 
         [HttpGet]
@@ -50,18 +42,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<List<PriceResponse>>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<List<PriceResponse>>>> FindAllPricesAsync()
         {
-            try
-            {
-                var prices = await _priceService.FindAllAsync();
-                var pricesDto = await _priceMapper.ToDtos(prices);
-                var res = new BaseResponseApi<List<PriceResponse>>(pricesDto, "Find all prices successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var prices = await _priceService.FindAllAsync();
+            var pricesDto = await _priceMapper.ToDtos(prices);
+            var res = new BaseResponseApi<List<PriceResponse>>(pricesDto, "Find all prices successful");
+            return Ok(res);
         }
 
         [HttpPost]
@@ -71,18 +55,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<PriceResponse>), statusCode: StatusCodes.Status201Created)]
         public async Task<ActionResult<BaseResponseApi<PriceResponse>>> CreatePriceAsync(CreatePriceRequest req)
         {
-            try
-            {
-                var price = await _priceService.CreateAsync(req);
-                var priceDto = await _priceMapper.ToDto(price);
-                var res = new BaseResponseApi<PriceResponse>(priceDto, "Create price successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var price = await _priceService.CreateAsync(req);
+            var priceDto = await _priceMapper.ToDto(price);
+            var res = new BaseResponseApi<PriceResponse>(priceDto, "Create price successful");
+            return Ok(res);
         }
 
         [HttpPut("{id}")]
@@ -92,18 +68,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<PriceResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<PriceResponse>>> UpdatePriceAsync(UpdatePriceRequest req, string id)
         {
-            try
-            {
-                var price = await _priceService.UpdateAsync(req, id);
-                var priceDto = await _priceMapper.ToDto(price);
-                var res = new BaseResponseApi<PriceResponse>(priceDto, "Update price successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var price = await _priceService.UpdateAsync(req, id);
+            var priceDto = await _priceMapper.ToDto(price);
+            var res = new BaseResponseApi<PriceResponse>(priceDto, "Update price successful");
+            return Ok(res);
         }
 
         [HttpDelete("{id}")]
@@ -113,18 +81,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(typeof(BaseResponseApi<PriceResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<PriceResponse>>> DeletePriceAsync(string id)
         {
-            try
-            {
-                var price = await _priceService.DeleteAsync(id);
-                var priceDto = await _priceMapper.ToDto(price);
-                var res = new BaseResponseApi<PriceResponse>(priceDto, "Delete price successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var price = await _priceService.DeleteAsync(id);
+            var priceDto = await _priceMapper.ToDto(price);
+            var res = new BaseResponseApi<PriceResponse>(priceDto, "Delete price successful");
+            return Ok(res);
         }
     }
 }

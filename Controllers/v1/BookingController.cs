@@ -29,18 +29,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<BookingResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<BookingResponse>>> GetBookingByIdAsync(string id)
         {
-            try
-            {
-                var (booking, seats, user) = await _bookingService.FindBookingByIdAsync(id);
-                var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
-                var res = new BaseResponseApi<BookingResponse>(bookingDto, "Get booking successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (booking, seats, user) = await _bookingService.FindBookingByIdAsync(id);
+            var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
+            var res = new BaseResponseApi<BookingResponse>(bookingDto, "Get booking successful");
+            return Ok(res);
         }
 
         [HttpGet("code/{code}")]
@@ -50,18 +42,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<BookingResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<BookingResponse>>> GetBookingByCodeAsync(string code)
         {
-            try
-            {
-                var (booking, seats, user) = await _bookingService.FindBookingByCodeAsync(code);
-                var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
-                var res = new BaseResponseApi<BookingResponse>(bookingDto, "Get booking successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (booking, seats, user) = await _bookingService.FindBookingByCodeAsync(code);
+            var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
+            var res = new BaseResponseApi<BookingResponse>(bookingDto, "Get booking successful");
+            return Ok(res);
         }
 
         [HttpGet]
@@ -71,18 +55,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<BookingResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<List<BookingResponse>>>> GetAllBookingAsync()
         {
-            try
-            {
-                var bookings = await _bookingService.FindAllBookingAsync();
-                var bookingDtos = await _bookingMapper.ToDtos(bookings);
-                var res = new BaseResponseApi<List<BookingResponse>>(bookingDtos, "Get all booking successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var bookings = await _bookingService.FindAllBookingAsync();
+            var bookingDtos = await _bookingMapper.ToDtos(bookings);
+            var res = new BaseResponseApi<List<BookingResponse>>(bookingDtos, "Get all booking successful");
+            return Ok(res);
         }
 
         [HttpPost("admin")]
@@ -92,18 +68,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<BookingResponse>), statusCode: StatusCodes.Status201Created)]
         public async Task<ActionResult<BaseResponseApi<BookingResponse>>> BookingFromAdminAsync([FromForm] CreateBookingRequest req)
         {
-            try
-            {
-                var (booking, seats, user) = await _bookingService.BookingFromAdminAsync(req);
-                var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
-                var res = new BaseResponseApi<BookingResponse>(bookingDto, "Create booking successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (booking, seats, user) = await _bookingService.BookingFromAdminAsync(req);
+            var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
+            var res = new BaseResponseApi<BookingResponse>(bookingDto, "Create booking successful");
+            return Ok(res);
         }
 
         [HttpPost("customer")]
@@ -113,18 +81,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<BookingResponse>), statusCode: StatusCodes.Status201Created)]
         public async Task<ActionResult<BaseResponseApi<BookingResponse>>> BookingFromCustomerAsync([FromForm] CreateBookingRequest req)
         {
-            try
-            {
-                var (booking, seats, user) = await _bookingService.BookingFromCustomerAsync(req);
-                var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
-                var res = new BaseResponseApi<BookingResponse>(bookingDto, "Create booking successful");
-                return Ok(res);
-            }   
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (booking, seats, user) = await _bookingService.BookingFromCustomerAsync(req);
+            var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
+            var res = new BaseResponseApi<BookingResponse>(bookingDto, "Create booking successful");
+            return Ok(res);
         }
 
         [HttpPut("admin/confirm/{bookingCode}")]
@@ -134,18 +94,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<BookingResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<BookingResponse>>> ConfirmBookingAsync([FromForm] ConfirmBookingRequest req, string bookingCode)
         {
-            try
-            {
-                var (booking, seats, user) = await _bookingService.ConfirmBookingAsync(req, bookingCode);
-                var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
-                var res = new BaseResponseApi<BookingResponse>(bookingDto, "Confirm booking successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (booking, seats, user) = await _bookingService.ConfirmBookingAsync(req, bookingCode);
+            var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
+            var res = new BaseResponseApi<BookingResponse>(bookingDto, "Confirm booking successful");
+            return Ok(res);
         }
 
         [HttpPut("customer/upload/{bookingCode}")]
@@ -155,18 +107,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<BookingResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<BookingResponse>>> UploadPaymentProofAsync(IFormFile paymentProof, string bookingCode)
         {
-            try
-            {
-                var (booking, seats, user) = await _bookingService.UploadPaymentProofAsync(paymentProof, bookingCode);
-                var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
-                var res = new BaseResponseApi<BookingResponse>(bookingDto, "Upload payment proof successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var (booking, seats, user) = await _bookingService.UploadPaymentProofAsync(paymentProof, bookingCode);
+            var bookingDto = await _bookingMapper.ToDto(booking, seats, user);
+            var res = new BaseResponseApi<BookingResponse>(bookingDto, "Upload payment proof successful");
+            return Ok(res);
         }
 
     }

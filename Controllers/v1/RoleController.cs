@@ -29,18 +29,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<RoleResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<RoleResponse>>> FindRoleById(string id)
         {
-            try
-            {
-                var role = await _roleService.FindByIdAsync(id);
-                var roleDto = await _roleMapper.ToDto(role);
-                var res = new BaseResponseApi<RoleResponse>(roleDto, "Find role by id successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var role = await _roleService.FindByIdAsync(id);
+            var roleDto = await _roleMapper.ToDto(role);
+            var res = new BaseResponseApi<RoleResponse>(roleDto, "Find role by id successful");
+            return Ok(res);
         }
 
         [HttpGet("code/{code}")]
@@ -50,18 +42,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<RoleResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<RoleResponse>>> FindRoleByCode(string code)
         {
-            try
-            {
-                var role = await _roleService.FindByCodeAsync(code);
-                var roleDto = await _roleMapper.ToDto(role);
-                var res = new BaseResponseApi<RoleResponse>(roleDto, "Find role by code successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var role = await _roleService.FindByCodeAsync(code);
+            var roleDto = await _roleMapper.ToDto(role);
+            var res = new BaseResponseApi<RoleResponse>(roleDto, "Find role by code successful");
+            return Ok(res);
         }
 
         [HttpGet]
@@ -71,18 +55,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<List<RoleResponse>>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<List<RoleResponse>>>> FindAllRolesAsync()
         {
-            try
-            {
-                var roles = await _roleService.FindAllAsync();
-                var rolesDto = await _roleMapper.ToDtos(roles.ToList());
-                var res = new BaseResponseApi<IEnumerable<RoleResponse>>(rolesDto, "Find all roles successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var roles = await _roleService.FindAllAsync();
+            var rolesDto = await _roleMapper.ToDtos(roles.ToList());
+            var res = new BaseResponseApi<IEnumerable<RoleResponse>>(rolesDto, "Find all roles successful");
+            return Ok(res);
         }
 
         [HttpPost]
@@ -92,18 +68,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<RoleResponse>), statusCode: StatusCodes.Status201Created)]
         public async Task<ActionResult<BaseResponseApi<RoleResponse>>> CreateRoleAsync(CreateRoleRequest request)
         {
-            try
-            {
-                var role = await _roleService.CreateAsync(request);
-                var roleDto = await _roleMapper.ToDto(role);
-                var res = new BaseResponseApi<RoleResponse>(roleDto, "Create role successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var role = await _roleService.CreateAsync(request);
+            var roleDto = await _roleMapper.ToDto(role);
+            var res = new BaseResponseApi<RoleResponse>(roleDto, "Create role successful");
+            return Ok(res);
         }
 
         [HttpPut("{id}")]
@@ -113,18 +81,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(type: typeof(BaseResponseApi<RoleResponse>), statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<RoleResponse>>> UpdateRoleAsync(UpdateRoleRequest request, string id)
         {
-            try
-            {
-                var role = await _roleService.UpdateAsync(request, id);
-                var roleDto = await _roleMapper.ToDto(role);
-                var res = new BaseResponseApi<RoleResponse>(roleDto, "Update role successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var role = await _roleService.UpdateAsync(request, id);
+            var roleDto = await _roleMapper.ToDto(role);
+            var res = new BaseResponseApi<RoleResponse>(roleDto, "Update role successful");
+            return Ok(res);
         }
 
         [HttpDelete("{id}")]
@@ -134,18 +94,10 @@ namespace MovieApi.Controllers.v1
         [ProducesResponseType(statusCode: StatusCodes.Status200OK)]
         public async Task<ActionResult<BaseResponseApi<RoleResponse>>> DeleteRoleAsync(string id)
         {
-            try
-            {
-                var role = await _roleService.DeleteAsync(id);
-                var roleDto = await _roleMapper.ToDto(role);
-                var res = new BaseResponseApi<RoleResponse>(roleDto, "Delete role successful");
-                return Ok(res);
-            }
-            catch(Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                throw ex;
-            }
+            var role = await _roleService.DeleteAsync(id);
+            var roleDto = await _roleMapper.ToDto(role);
+            var res = new BaseResponseApi<RoleResponse>(roleDto, "Delete role successful");
+            return Ok(res);
         }
     }
 }

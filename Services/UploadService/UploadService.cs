@@ -1,3 +1,5 @@
+using MovieApi.Exceptions;
+
 namespace MovieApi.Services.UploadService
 {
     public class UploadService : IUploadService
@@ -18,7 +20,7 @@ namespace MovieApi.Services.UploadService
             var extension = Path.GetExtension(file.FileName);
 
             if (!allowedExtensions.Contains(extension))
-                throw new BadHttpRequestException("Image format not allowed");
+                throw new BadRequestException("Image format not allowed");
 
             var uploadsFolder = Path.Combine(_env.ContentRootPath, "Uploads", folderName);
             if(!Directory.Exists(uploadsFolder))
